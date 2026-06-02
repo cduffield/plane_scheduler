@@ -29,6 +29,7 @@
 @import "./components/direct_uploads.css" layer(components);
 @import "./components/docs.css" layer(components);
 @import "./components/forms.css" layer(components);
+@import "./components/fullcalendar.css" layer(components);
 @import "./components/hotwire_native.css" layer(components);
 @import "./components/iframe.css" layer(components);
 @import "./components/modal.css" layer(components);

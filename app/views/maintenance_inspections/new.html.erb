@@ -1,0 +1,17 @@
+<% Current.meta_tags.set(title: "New Maintenance Inspection") %>
+
+<div class="container px-4 mx-auto my-8">
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="h3">
+      <%= link_to "Airplanes", airplanes_path, class: "text-black dark:text-white" %>
+      <span class="text-gray-400 font-light mx-2">\</span>
+      <%= link_to @airplane.n_number.presence || "Airplane ##{@airplane.id}", airplane_path(@airplane), class: "text-black dark:text-white" %>
+      <span class="text-gray-400 font-light mx-2">\</span>
+      New Maintenance Inspection
+    </h1>
+  </div>
+
+  <div class="p-8 bg-white dark:bg-gray-900 dark:border dark:border-gray-700 rounded shadow">
+    <%= render "form", airplane: @airplane, maintenance_inspection: @maintenance_inspection %>
+  </div>
+</div>

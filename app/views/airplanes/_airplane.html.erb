@@ -1,0 +1,21 @@
+<div id="<%= dom_id airplane %>">
+  <div class="mb-4">
+    <p class="text-sm font-medium text-gray-500">N number</p>
+    <%= airplane.n_number %>
+  </div>
+  <div class="mb-4">
+    <p class="text-sm font-medium text-gray-500">Hobbs time</p>
+    <%= airplane.hobbs_time %>
+  </div>
+  <div class="mb-4">
+    <p class="text-sm font-medium text-gray-500">Tach time</p>
+    <%= airplane.tach_time %>
+  </div>
+  <div class="mb-4">
+    <p class="text-sm font-medium text-gray-500">Hourly rate</p>
+    <%= airplane.rate.present? ? number_to_currency(airplane.rate) : nil %>
+  </div>
+  <% if action_name != "show" %>
+    <%= link_to "View this airplane", airplane, class: "btn btn-secondary" %>
+  <% end %>
+</div>

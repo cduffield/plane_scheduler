@@ -23,3 +23,9 @@ pin "@floating-ui/dom", to: "@floating-ui--dom.js" # @1.7.4
 pin "@floating-ui/core", to: "@floating-ui--core.js" # @1.7.3
 pin "@floating-ui/utils", to: "@floating-ui--utils.js" # @0.2.10
 pin "@floating-ui/utils/dom", to: "@floating-ui--utils--dom.js"
+pin "@fullcalendar/core", to: "https://esm.sh/@fullcalendar/core@6.1.20"
+pin "@fullcalendar/daygrid", to: "https://esm.sh/@fullcalendar/daygrid@6.1.20"
+pin "@fullcalendar/interaction", to: "https://esm.sh/@fullcalendar/interaction@6.1.20"
+pin "@fullcalendar/list", to: "https://esm.sh/@fullcalendar/list@6.1.20"
+pin "@fullcalendar/timegrid", to: "https://esm.sh/@fullcalendar/timegrid@6.1.20"
+pin "flatpickr" # @4.6.13

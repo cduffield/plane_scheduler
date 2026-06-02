@@ -1,0 +1,95 @@
+<% Current.meta_tags.set(title: "Payment History") %>
+
+<div class="container px-4 mx-auto my-8">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="h3">Payment History</h1>
+      <p class="text-sm text-gray-600 dark:text-gray-300">A record of your event payments and current payment status.</p>
+    </div>
+  </div>
+
+  <% if @unpaid_event_payments.any? || @paid_event_payments.any? %>
+    <div class="space-y-8">
+      <div class="bg-white dark:bg-gray-900 dark:border dark:border-gray-700 rounded-md shadow overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Unpaid</h2>
+        </div>
+
+        <% if @unpaid_event_payments.any? %>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead class="bg-gray-50 dark:bg-gray-800/50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-300">Event</th>
+                  <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-300">Airplane</th>
+                  <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-300">Amount</th>
+                  <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-300">Status</th>
+                  <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-300"></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                <% @unpaid_event_payments.each do |event_payment| %>
+                  <tr>
+                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">Event #<%= event_payment.event_id %></td>
+                    <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300"><%= event_payment.event.airplane&.n_number.presence || "-" %></td>
+                    <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300"><%= number_to_currency(event_payment.amount) %></td>
+                    <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300"><%= event_payment.status.titleize %></td>
+                    <td class="px-6 py-4 text-sm">
+                      <%= link_to "View Event", event_path(event_payment.event), class: "text-primary dark:text-white hover:underline" %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <div class="p-6 text-sm text-gray-600 dark:text-gray-300">No unpaid event payments.</div>
+        <% end %>
+      </div>
+
+      <div class="bg-white dark:bg-gray-900 dark:border dark:border-gray-700 rounded-md shadow overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Paid</h2>
+        </div>
+
+        <% if @paid_event_payments.any? %>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead class="bg-gray-50 dark:bg-gray-800/50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-300">Event</th>
+                  <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-300">Airplane</th>
+                  <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-300">Amount</th>
+                  <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-300">Paid At</th>
+                  <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-300"></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                <% @paid_event_payments.each do |event_payment| %>
+                  <tr>
+                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">Event #<%= event_payment.event_id %></td>
+                    <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300"><%= event_payment.event.airplane&.n_number.presence || "-" %></td>
+                    <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300"><%= number_to_currency(event_payment.amount) %></td>
+                    <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300"><%= event_payment.paid_at.present? ? l(event_payment.paid_at, format: :long) : "-" %></td>
+                    <td class="px-6 py-4 text-sm">
+                      <%= link_to "View Event", event_path(event_payment.event), class: "text-primary dark:text-white hover:underline" %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <div class="p-6 text-sm text-gray-600 dark:text-gray-300">No paid event payments yet.</div>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <div class="bg-white dark:bg-gray-900 dark:border dark:border-gray-700 rounded-md shadow overflow-hidden">
+      <div class="p-8 text-center">
+        <p class="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">No payments yet</p>
+        <p class="text-sm text-gray-600 dark:text-gray-300">Once you pay for a closed event, it will show up here.</p>
+      </div>
+    </div>
+  <% end %>
+</div>

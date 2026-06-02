@@ -201,6 +201,40 @@ form.inline {
   }
 }
 
+.datetime-select {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.datetime-select select {
+  min-width: 0;
+}
+
+.datetime-select__separator {
+  grid-column: 1 / -1;
+  color: var(--base-text-tertiary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  padding-top: 0.25rem;
+  text-transform: uppercase;
+}
+
+@media (min-width: 768px) {
+  .datetime-select {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.8fr) minmax(0, 0.9fr) auto minmax(0, 0.8fr) minmax(0, 0.8fr);
+  }
+
+  .datetime-select__separator {
+    grid-column: auto;
+    justify-self: center;
+    padding-top: 0;
+  }
+}
+
 /* Checkboxes, Radio Buttons, and Switches/Toggles */
 .form-picker-group {
   display: flex;

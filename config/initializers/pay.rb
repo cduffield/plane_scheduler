@@ -8,11 +8,15 @@ Pay.setup do |config|
 
   config.mail_to = -> {
     pay_customer = params[:pay_customer]
-    account = pay_customer.owner
+    owner = pay_customer.owner
 
     recipients = []
-    recipients << ActionMailer::Base.email_address_with_name(account.owner.email, pay_customer.customer_name) if account
-    recipients << account.billing_email if account&.billing_email?
+    if owner.is_a?(Account)
+      recipients << ActionMailer::Base.email_address_with_name(owner.owner.email, pay_customer.customer_name)
+      recipients << owner.billing_email if owner.billing_email?
+    elsif owner.respond_to?(:email) && owner.email.present?
+      recipients << ActionMailer::Base.email_address_with_name(owner.email, pay_customer.customer_name)
+    end
     recipients
   }
 end
@@ -40,9 +44,26 @@ end
 ActiveSupport.on_load :pay_charge do
   has_prefix_id :ch
   after_create :complete_referral, if: -> { defined?(Refer) }
+  after_commit :sync_event_payment, on: :create
 
   # Mark the account owner's referral complete on the first successful payment
   def complete_referral
-    customer.owner.owner.referral&.complete!
+    owner = customer.owner
+    referral_owner = owner.is_a?(Account) ? owner.owner : owner
+    referral_owner&.referral&.complete!
+  end
+
+  def sync_event_payment
+    event_payment_id = metadata["event_payment_id"]
+    return if event_payment_id.blank?
+
+    event_payment = EventPayment.find_by(id: event_payment_id)
+    return if event_payment.blank?
+
+    event_payment.update(
+      pay_charge: self,
+      status: :paid,
+      paid_at: Time.current
+    )
   end
 end

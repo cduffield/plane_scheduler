@@ -1,0 +1,96 @@
+<% Current.meta_tags.set(title: "Airplanes ##{@airplane.id}") %>
+<%= turbo_stream_from @airplane %>
+<% can_manage_airplane = user_signed_in? && current_user.admin? %>
+
+<div class="container px-4 mx-auto my-8">
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="h3">
+      <%= link_to "Airplanes", airplanes_path, class: "text-black dark:text-white" %>
+      <span class="text-gray-400 font-light mx-2">\</span>
+      Airplane #<%= @airplane.id %>
+    </h1>
+    <% if can_manage_airplane %>
+      <div class="flex items-center gap-2">
+        <%= link_to "Add Inspection", new_airplane_maintenance_inspection_path(@airplane), class: "btn btn-primary" %>
+        <%= link_to t("edit"), edit_airplane_path(@airplane), class: "btn btn-secondary" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="p-8 bg-white dark:bg-gray-900 dark:border dark:border-gray-700 rounded shadow">
+    <%= render @airplane %>
+  </div>
+
+  <div class="mt-8 p-8 bg-white dark:bg-gray-900 dark:border dark:border-gray-700 rounded shadow">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="h4">Maintenance Inspections</h2>
+      <% if can_manage_airplane %>
+        <%= link_to "Add Inspection", new_airplane_maintenance_inspection_path(@airplane), class: "btn btn-secondary" %>
+      <% end %>
+    </div>
+
+    <% if @airplane.maintenance_inspections.any? %>
+      <div class="space-y-4">
+        <% @airplane.maintenance_inspections.order(created_at: :desc).each do |inspection| %>
+          <div class="rounded-md border border-gray-200 p-5 dark:border-gray-700">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100"><%= inspection.name %></h3>
+                <% if inspection.description.present? %>
+                  <p class="mt-1 text-sm text-gray-600 dark:text-gray-300"><%= inspection.description %></p>
+                <% end %>
+              </div>
+
+              <% if can_manage_airplane %>
+                <%= link_to "Edit", edit_airplane_maintenance_inspection_path(@airplane, inspection), class: "btn btn-secondary" %>
+              <% end %>
+            </div>
+
+            <dl class="mt-4 grid gap-4 md:grid-cols-4">
+              <div>
+                <dt class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">Tracking</dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100"><%= inspection.tracking_type.titleize %></dd>
+              </div>
+
+              <div>
+                <dt class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">Calendar Rule</dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">
+                  <% if inspection.calendar_interval_value.present? && inspection.calendar_interval_unit.present? %>
+                    Every <%= inspection.calendar_interval_value %> <%= inspection.calendar_interval_unit %>
+                  <% else %>
+                    Not used
+                  <% end %>
+                </dd>
+              </div>
+
+              <div>
+                <dt class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">Hour Rule</dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">
+                  <% if inspection.hour_interval_value.present? && inspection.hour_interval_type.present? %>
+                    Every <%= inspection.hour_interval_value %> <%= inspection.hour_interval_type %> hours
+                  <% else %>
+                    Not used
+                  <% end %>
+                </dd>
+              </div>
+
+              <div>
+                <dt class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">Status</dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100"><%= inspection.active? ? "Active" : "Inactive" %></dd>
+              </div>
+
+              <div>
+                <dt class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">Last Performed</dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">
+                  <%= inspection.latest_event&.performed_at.present? ? l(inspection.latest_event.performed_at, format: :long) : "Never recorded" %>
+                </dd>
+              </div>
+            </dl>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-sm text-gray-600 dark:text-gray-300">No maintenance inspections have been added for this airplane yet.</p>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,88 @@
+<%= form_with(model: [airplane, maintenance_inspection]) do |form| %>
+  <%= render "error_messages", resource: form.object %>
+
+  <div class="form-group">
+    <%= form.label :name %>
+    <%= form.text_field :name, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :description %>
+    <%= form.text_area :description, class: "form-control", rows: 4 %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :tracking_type %>
+    <%= form.select :tracking_type, MaintenanceInspection.tracking_types.keys.map { |value| [value.titleize, value] }, {}, { class: "form-control" } %>
+    <p class="form-hint">Choose whether this inspection is tracked by calendar, hours, or whichever comes first.</p>
+  </div>
+
+  <div class="grid gap-6 md:grid-cols-2">
+    <div class="form-group">
+      <%= form.label :calendar_interval_value, "Calendar interval" %>
+      <%= form.number_field :calendar_interval_value, class: "form-control", min: 1 %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :calendar_interval_unit, "Calendar unit" %>
+      <%= form.select :calendar_interval_unit, MaintenanceInspection.calendar_interval_units.keys.map { |value| [value.titleize, value] }, { include_blank: "Not calendar based" }, { class: "form-control" } %>
+    </div>
+  </div>
+
+  <div class="grid gap-6 md:grid-cols-2">
+    <div class="form-group">
+      <%= form.label :hour_interval_type, "Hour type" %>
+      <%= form.select :hour_interval_type, MaintenanceInspection.hour_interval_types.keys.map { |value| [value.titleize, value] }, { include_blank: "Not hour based" }, { class: "form-control" } %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :hour_interval_value, "Hour interval" %>
+      <%= form.number_field :hour_interval_value, class: "form-control", min: 0, step: 0.1 %>
+    </div>
+  </div>
+
+  <div class="form-picker-group">
+    <%= form.check_box :active, class: "form-checkbox" %>
+    <div>
+      <%= form.label :active %>
+      <p class="form-hint">Inactive inspections stay in history but won't be considered due.</p>
+    </div>
+  </div>
+
+  <div class="mt-8 border-t border-gray-200 pt-6 dark:border-gray-700">
+    <h2 class="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">Last Inspection Performed</h2>
+    <p class="form-hint mb-4">Optional: record the most recent completed inspection so due dates and hours can be calculated right away.</p>
+
+    <div class="form-group">
+      <%= label_tag "last_inspection_event[performed_at]", "Performed on" %>
+      <%= date_field_tag "last_inspection_event[performed_at]", @latest_inspection_event.performed_at&.to_date, class: "form-control" %>
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-2">
+      <div class="form-group">
+        <%= label_tag "last_inspection_event[hobbs_time]", "Hobbs at inspection" %>
+        <%= number_field_tag "last_inspection_event[hobbs_time]", @latest_inspection_event.hobbs_time, class: "form-control", min: 0, step: 0.1 %>
+      </div>
+
+      <div class="form-group">
+        <%= label_tag "last_inspection_event[tach_time]", "Tach at inspection" %>
+        <%= number_field_tag "last_inspection_event[tach_time]", @latest_inspection_event.tach_time, class: "form-control", min: 0, step: 0.1 %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= label_tag "last_inspection_event[notes]", "Notes" %>
+      <%= text_area_tag "last_inspection_event[notes]", @latest_inspection_event.notes, class: "form-control", rows: 3 %>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <%= form.button button_text(form.send(:submit_default_value)), class: "btn btn-primary" %>
+
+    <% if maintenance_inspection.new_record? %>
+      <%= link_to t("cancel"), airplane_path(airplane), class: "btn btn-secondary" %>
+    <% else %>
+      <%= link_to t("cancel"), airplane_path(airplane), class: "btn btn-secondary" %>
+    <% end %>
+  </div>
+<% end %>

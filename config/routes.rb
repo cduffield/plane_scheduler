@@ -1,5 +1,21 @@
 # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 Rails.application.routes.draw do
+  resources :events do
+    collection do
+      get :calendar
+    end
+
+    member do
+      patch :open_flight
+      patch :close_flight
+    end
+
+    resource :payment, controller: "event_payments", only: :create
+  end
+  resources :event_payments, only: :index
+  resources :airplanes do
+    resources :maintenance_inspections, except: :show
+  end
   draw :jumpstart
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

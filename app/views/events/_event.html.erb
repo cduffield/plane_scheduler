@@ -1,0 +1,41 @@
+<div id="<%= dom_id event %>">
+  <div class="mb-4">
+    <p class="text-sm font-medium text-gray-500">Start time</p>
+    <%= event.start_time %>
+  </div>
+  <div class="mb-4">
+    <p class="text-sm font-medium text-gray-500">End time</p>
+    <%= event.end_time %>
+  </div>
+  <div class="mb-4">
+    <p class="text-sm font-medium text-gray-500">Airplane</p>
+    <%= event.airplane_id %>
+  </div>
+  <div class="mb-4">
+    <p class="text-sm font-medium text-gray-500">Status</p>
+    <%= event.status.titleize %>
+  </div>
+  <div class="mb-4">
+    <p class="text-sm font-medium text-gray-500">Tach start</p>
+    <%= event.tach_start %>
+  </div>
+  <div class="mb-4">
+    <p class="text-sm font-medium text-gray-500">Tach end</p>
+    <%= event.tach_end %>
+  </div>
+  <div class="mb-4">
+    <p class="text-sm font-medium text-gray-500">Hobbs start</p>
+    <%= event.hobbs_start %>
+  </div>
+  <div class="mb-4">
+    <p class="text-sm font-medium text-gray-500">Hobbs end</p>
+    <%= event.hobbs_end %>
+  </div>
+  <div class="mb-4">
+    <p class="text-sm font-medium text-gray-500">Total cost</p>
+    <%= event.total_cost.present? ? number_to_currency(event.total_cost) : nil %>
+  </div>
+  <% if action_name != "show" %>
+    <%= link_to "View this event", event, class: "btn btn-secondary" %>
+  <% end %>
+</div>
