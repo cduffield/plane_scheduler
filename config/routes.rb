@@ -1,5 +1,7 @@
 # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 Rails.application.routes.draw do
+  get "/account/admin", to: "account_admin#show", as: :account_admin
+
   resources :events do
     collection do
       get :calendar
@@ -27,7 +29,7 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   authenticated :user do
-    root to: "dashboard#show", as: :user_root
+    root to: "events#index", as: :user_root
     # Alternate route to use if logged in users should still see public root
     # get "/dashboard", to: "dashboard#show", as: :user_root
   end

@@ -1,13 +1,15 @@
 <% Current.meta_tags.set(title: "Events ##{@event.id}") %>
 <%= turbo_stream_from @event %>
 
-<div class="container px-4 mx-auto my-8">
-  <div class="flex items-center justify-between mb-4">
-    <h1 class="h3">
-      <%= link_to "Events", events_path, class: "text-black dark:text-white" %>
-      <span class="text-gray-400 font-light mx-2">\</span>
-      Event #<%= @event.id %>
-    </h1>
+<div class="container px-4 mx-auto my-8 sky-shell">
+  <div class="sky-page-header">
+    <div class="flex items-center gap-3">
+      <span class="sky-brand-mark">✈</span>
+      <div>
+        <p class="sky-kicker"><%= link_to "Events", events_path %></p>
+        <h1 class="h3">Event #<%= @event.id %></h1>
+      </div>
+    </div>
     <%= link_to t("edit"), edit_event_path(@event), class: "btn btn-secondary" %>
   </div>
 
@@ -15,8 +17,8 @@
     <% if @event.scheduled? %>
       <%= button_to "Open Flight", open_flight_event_path(@event), method: :patch, class: "btn btn-primary" %>
     <% elsif @event.open? %>
-      <div class="w-full max-w-xl rounded-md border border-gray-200 bg-white p-6 shadow dark:border-gray-700 dark:bg-gray-900">
-        <h2 class="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">Close Flight</h2>
+      <div class="sky-card sky-card-pad w-full max-w-xl">
+        <h2 class="sky-section-title mb-4">Close Flight</h2>
         <%= render "error_messages", resource: @event %>
 
         <%= form_with model: @event, url: close_flight_event_path(@event), method: :patch do |form| %>
@@ -36,28 +38,28 @@
         <% end %>
       </div>
     <% elsif @event.closed? %>
-      <div class="w-full max-w-xl rounded-md border border-gray-200 bg-white p-6 shadow dark:border-gray-700 dark:bg-gray-900">
-        <h2 class="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">Payment</h2>
+      <div class="sky-card sky-card-pad w-full max-w-xl">
+        <h2 class="sky-section-title mb-4">Payment</h2>
 
-        <div class="mb-4 text-sm text-gray-600 dark:text-gray-300">
+        <div class="mb-4 text-sm sky-muted">
           Total due:
-          <span class="font-semibold text-gray-900 dark:text-gray-100"><%= @event.total_cost.present? ? number_to_currency(@event.total_cost) : "Not available yet" %></span>
+          <span class="font-semibold"><%= @event.total_cost.present? ? number_to_currency(@event.total_cost) : "Not available yet" %></span>
         </div>
 
         <% if @event_payment&.paid? %>
-          <p class="text-sm font-medium text-green-700 dark:text-green-300">
+          <p class="sky-badge">
             Paid <%= @event_payment.paid_at.present? ? l(@event_payment.paid_at, format: :long) : "" %>
           </p>
         <% elsif @event.total_cost.present? && @event.total_cost > 0 %>
           <%= button_to "Pay with Stripe Checkout", event_payment_path(@event), method: :post, class: "btn btn-primary", form: { data: { turbo: false } } %>
         <% else %>
-          <p class="text-sm text-gray-600 dark:text-gray-300">Close the flight with valid Hobbs readings to generate a payable total.</p>
+          <p class="text-sm sky-muted">Close the flight with valid Hobbs readings to generate a payable total.</p>
         <% end %>
       </div>
     <% end %>
   </div>
 
-  <div class="p-8 bg-white dark:bg-gray-900 dark:border dark:border-gray-700 rounded shadow">
+  <div class="sky-card sky-card-pad">
     <%= render @event %>
   </div>
 </div>

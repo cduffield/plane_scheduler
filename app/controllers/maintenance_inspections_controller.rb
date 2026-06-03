@@ -1,8 +1,9 @@
 class MaintenanceInspectionsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_airplane
   before_action :set_maintenance_inspection, only: [:edit, :update, :destroy]
   before_action :set_latest_inspection_event, only: [:new, :create, :edit, :update]
-  before_action :require_admin_user
+  before_action :require_account_admin
 
   def new
     @maintenance_inspection = @airplane.maintenance_inspections.new(active: true)
@@ -39,7 +40,7 @@ class MaintenanceInspectionsController < ApplicationController
   private
 
   def set_airplane
-    @airplane = Airplane.find(params.expect(:airplane_id))
+    @airplane = current_account.airplanes.find(params.expect(:airplane_id))
   rescue ActiveRecord::RecordNotFound
     redirect_to airplanes_path
   end
@@ -112,7 +113,7 @@ class MaintenanceInspectionsController < ApplicationController
     @latest_inspection_event = event
   end
 
-  def require_admin_user
-    redirect_to root_path, alert: t("must_be_an_admin") unless current_user&.admin?
+  def require_account_admin
+    redirect_to root_path, alert: t("must_be_an_admin") unless Current.account_admin?
   end
 end

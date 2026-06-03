@@ -3,7 +3,11 @@ class EventPaymentsController < ApplicationController
   before_action :set_event, only: :create
 
   def index
-    payments = current_user.event_payments.includes(event: :airplane).order(created_at: :desc)
+    payments = current_user.event_payments
+      .joins(event: :airplane)
+      .where(airplanes: { account_id: current_account.id })
+      .includes(event: :airplane)
+      .order(created_at: :desc)
     @unpaid_event_payments = payments.reject(&:paid?)
     @paid_event_payments = payments.select(&:paid?)
   end
@@ -70,7 +74,7 @@ class EventPaymentsController < ApplicationController
   private
 
   def set_event
-    @event = Event.find(params.expect(:event_id))
+    @event = current_account.events.find(params.expect(:event_id))
   rescue ActiveRecord::RecordNotFound
     redirect_to events_path
   end

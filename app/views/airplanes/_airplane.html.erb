@@ -1,21 +1,26 @@
 <div id="<%= dom_id airplane %>">
-  <div class="mb-4">
-    <p class="text-sm font-medium text-gray-500">N number</p>
-    <%= airplane.n_number %>
+  <div class="grid gap-5 md:grid-cols-4">
+    <div>
+      <p class="sky-kicker">N number</p>
+      <p class="mt-1 text-lg font-bold tabular-nums"><%= airplane.n_number %></p>
+    </div>
+    <div>
+      <p class="sky-kicker">Hobbs time</p>
+      <p class="mt-1 text-lg font-bold tabular-nums"><%= airplane.hobbs_time %></p>
+    </div>
+    <div>
+      <p class="sky-kicker">Tach time</p>
+      <p class="mt-1 text-lg font-bold tabular-nums"><%= airplane.tach_time %></p>
+    </div>
+    <div>
+      <p class="sky-kicker">Hourly rate</p>
+      <p class="mt-1 text-lg font-bold tabular-nums"><%= airplane.rate.present? ? number_to_currency(airplane.rate) : nil %></p>
+    </div>
   </div>
-  <div class="mb-4">
-    <p class="text-sm font-medium text-gray-500">Hobbs time</p>
-    <%= airplane.hobbs_time %>
-  </div>
-  <div class="mb-4">
-    <p class="text-sm font-medium text-gray-500">Tach time</p>
-    <%= airplane.tach_time %>
-  </div>
-  <div class="mb-4">
-    <p class="text-sm font-medium text-gray-500">Hourly rate</p>
-    <%= airplane.rate.present? ? number_to_currency(airplane.rate) : nil %>
-  </div>
+
   <% if action_name != "show" %>
-    <%= link_to "View this airplane", airplane, class: "btn btn-secondary" %>
+    <div class="mt-6">
+      <%= link_to "View this airplane", airplane, class: "btn btn-secondary" %>
+    </div>
   <% end %>
 </div>

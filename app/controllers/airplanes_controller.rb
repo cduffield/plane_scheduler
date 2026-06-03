@@ -1,10 +1,11 @@
 class AirplanesController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_airplane, only: [:show, :edit, :update, :destroy]
-  before_action :require_admin_user, except: [:index, :show]
+  before_action :require_account_admin, except: [:index, :show]
 
   # GET /airplanes
   def index
-    @pagy, @airplanes = pagy(Airplane.sort_by_params(params[:sort], sort_direction))
+    @pagy, @airplanes = pagy(current_account.airplanes.sort_by_params(params[:sort], sort_direction))
   end
 
   # GET /airplanes/1 or /airplanes/1.json
@@ -13,7 +14,7 @@ class AirplanesController < ApplicationController
 
   # GET /airplanes/new
   def new
-    @airplane = Airplane.new
+    @airplane = current_account.airplanes.new
   end
 
   # GET /airplanes/1/edit
@@ -22,7 +23,7 @@ class AirplanesController < ApplicationController
 
   # POST /airplanes or /airplanes.json
   def create
-    @airplane = Airplane.new(airplane_params)
+    @airplane = current_account.airplanes.new(airplane_params)
 
     respond_to do |format|
       if @airplane.save
@@ -61,7 +62,7 @@ class AirplanesController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_airplane
-    @airplane = Airplane.find(params.expect(:id))
+    @airplane = current_account.airplanes.find(params.expect(:id))
   rescue ActiveRecord::RecordNotFound
     redirect_to airplanes_path
   end
@@ -71,7 +72,7 @@ class AirplanesController < ApplicationController
     params.expect(airplane: [ :n_number, :hobbs_time, :tach_time, :rate ])
   end
 
-  def require_admin_user
-    redirect_to root_path, alert: t("must_be_an_admin") unless current_user&.admin?
+  def require_account_admin
+    redirect_to root_path, alert: t("must_be_an_admin") unless Current.account_admin?
   end
 end

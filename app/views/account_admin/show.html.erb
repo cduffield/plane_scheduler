@@ -1,0 +1,179 @@
+<div class="container px-4 mx-auto my-8 sky-shell">
+  <div class="sky-page-header">
+    <div class="flex items-center gap-3">
+      <span class="sky-brand-mark">A</span>
+      <div>
+        <p class="sky-kicker"><%= current_account.name %></p>
+        <h1 class="text-3xl font-black tracking-tight">Account Admin</h1>
+        <p class="sky-muted mt-1">Manage your team, fleet, inspections, and scheduling operations.</p>
+      </div>
+    </div>
+
+    <%= link_to "Back to Calendar", events_path, class: "btn btn-secondary" %>
+  </div>
+
+  <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-6">
+    <div class="sky-card sky-card-pad">
+      <p class="sky-kicker">Team members</p>
+      <p class="sky-stat mt-3"><%= @account_users.size %></p>
+      <p class="sky-muted mt-1">In this account</p>
+    </div>
+
+    <div class="sky-card sky-card-pad">
+      <p class="sky-kicker">Flight instructors</p>
+      <p class="sky-stat mt-3"><%= @account_users.count(&:flight_instructor?) %></p>
+      <p class="sky-muted mt-1">Assigned instructor role</p>
+    </div>
+
+    <div class="sky-card sky-card-pad">
+      <p class="sky-kicker">Aircraft</p>
+      <p class="sky-stat mt-3"><%= @airplanes.size %></p>
+      <p class="sky-muted mt-1">In fleet</p>
+    </div>
+
+    <div class="sky-card sky-card-pad">
+      <p class="sky-kicker">Inspections</p>
+      <p class="sky-stat mt-3"><%= @maintenance_inspections.size %></p>
+      <p class="sky-muted mt-1">Configured checks</p>
+    </div>
+  </div>
+
+  <div class="grid gap-6 lg:grid-cols-3">
+    <section class="sky-card sky-card-pad lg:col-span-2">
+      <div class="flex items-center justify-between gap-4 mb-4">
+        <div>
+          <h2 class="sky-section-title">Team</h2>
+          <p class="sky-muted text-sm">Account admins and flight instructors for this organization.</p>
+        </div>
+        <%= link_to "Manage Accounts", accounts_path, class: "btn btn-secondary" if Jumpstart.config.team_accounts? %>
+      </div>
+
+      <% if @account_users.any? %>
+        <div class="overflow-x-auto rounded-xl border" style="border-color: var(--sky-border);">
+          <table class="sky-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Roles</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @account_users.each do |account_user| %>
+                <tr>
+                  <td><%= account_user.user.name.presence || "Invited user" %></td>
+                  <td><%= account_user.user.email %></td>
+                  <td>
+                    <div class="flex flex-wrap gap-2">
+                      <% if account_user.admin? %>
+                        <span class="sky-badge">Admin</span>
+                      <% end %>
+                      <% if account_user.flight_instructor? %>
+                        <span class="sky-badge sky-badge-muted">Flight instructor</span>
+                      <% end %>
+                      <% unless account_user.admin? || account_user.flight_instructor? %>
+                        <span class="sky-badge sky-badge-muted">Member</span>
+                      <% end %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="sky-empty">No team members found for this account.</div>
+      <% end %>
+    </section>
+
+    <section class="sky-card sky-card-pad">
+      <div class="flex items-center justify-between gap-4 mb-4">
+        <div>
+          <h2 class="sky-section-title">Aircraft</h2>
+          <p class="sky-muted text-sm">Fleet attached to this account.</p>
+        </div>
+        <%= link_to "Add", new_airplane_path, class: "btn btn-primary" %>
+      </div>
+
+      <% if @airplanes.any? %>
+        <div class="space-y-3">
+          <% @airplanes.each do |airplane| %>
+            <%= link_to airplane_path(airplane), class: "block sky-panel p-4 hover:shadow-sm transition" do %>
+              <div class="flex items-center justify-between gap-3">
+                <div>
+                  <p class="font-extrabold"><%= airplane.n_number %></p>
+                  <p class="sky-muted text-sm">Hobbs <%= number_with_precision(airplane.hobbs_time, precision: 1) || "--" %> · Tach <%= number_with_precision(airplane.tach_time, precision: 1) || "--" %></p>
+                </div>
+                <span class="sky-badge"><%= number_to_currency(airplane.rate || 0) %>/hr</span>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="sky-empty">No aircraft have been added yet.</div>
+      <% end %>
+    </section>
+
+    <section class="sky-card sky-card-pad lg:col-span-2">
+      <div class="flex items-center justify-between gap-4 mb-4">
+        <div>
+          <h2 class="sky-section-title">Upcoming Flights</h2>
+          <p class="sky-muted text-sm">The next flights scheduled for this account.</p>
+        </div>
+        <%= link_to "New Flight", new_event_path, class: "btn btn-primary" %>
+      </div>
+
+      <% if @upcoming_events.any? %>
+        <div class="overflow-x-auto rounded-xl border" style="border-color: var(--sky-border);">
+          <table class="sky-table">
+            <thead>
+              <tr>
+                <th>Aircraft</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @upcoming_events.each do |event| %>
+                <tr>
+                  <td><%= link_to event.airplane.n_number, event_path(event), class: "font-extrabold hover:underline" %></td>
+                  <td><%= event.start_time.in_time_zone.strftime("%b %-d, %Y %-I:%M %p") %></td>
+                  <td><%= event.end_time.in_time_zone.strftime("%b %-d, %Y %-I:%M %p") %></td>
+                  <td><span class="sky-badge sky-badge-muted"><%= event.status.to_s.humanize %></span></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="sky-empty">No upcoming flights are scheduled.</div>
+      <% end %>
+    </section>
+
+    <section class="sky-card sky-card-pad">
+      <div class="mb-4">
+        <h2 class="sky-section-title">Maintenance</h2>
+        <p class="sky-muted text-sm">Inspection programs configured for the fleet.</p>
+      </div>
+
+      <% if @maintenance_inspections.any? %>
+        <div class="space-y-3">
+          <% @maintenance_inspections.each do |inspection| %>
+            <%= link_to edit_airplane_maintenance_inspection_path(inspection.airplane, inspection), class: "block sky-panel p-4 hover:shadow-sm transition" do %>
+              <div class="flex items-center justify-between gap-3">
+                <div>
+                  <p class="font-extrabold"><%= inspection.name %></p>
+                  <p class="sky-muted text-sm"><%= inspection.airplane.n_number %> · <%= inspection.tracking_type.to_s.humanize %></p>
+                </div>
+                <span class="<%= inspection.active? ? 'sky-badge' : 'sky-badge sky-badge-muted' %>"><%= inspection.active? ? "Active" : "Inactive" %></span>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="sky-empty">No inspections have been configured yet.</div>
+      <% end %>
+    </section>
+  </div>
+</div>

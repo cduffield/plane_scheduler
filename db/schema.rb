@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_13_120100) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_03_032058) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -97,12 +97,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_13_120100) do
   end
 
   create_table "airplanes", force: :cascade do |t|
+    t.bigint "account_id", null: false
     t.datetime "created_at", null: false
     t.decimal "hobbs_time", precision: 8, scale: 1
     t.string "n_number"
     t.decimal "rate", precision: 10, scale: 2
     t.decimal "tach_time", precision: 8, scale: 1
     t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_airplanes_on_account_id"
   end
 
   create_table "announcements", force: :cascade do |t|
@@ -427,6 +429,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_13_120100) do
   add_foreign_key "account_users", "users"
   add_foreign_key "accounts", "users", column: "owner_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "airplanes", "accounts"
   add_foreign_key "api_tokens", "users"
   add_foreign_key "event_payments", "events"
   add_foreign_key "event_payments", "pay_charges"

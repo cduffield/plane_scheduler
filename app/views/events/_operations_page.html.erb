@@ -1,0 +1,62 @@
+<div class="sky-ops-shell">
+  <section class="sky-hero">
+    <div class="sky-hero-content">
+      <p class="sky-hero-kicker">Operations Control</p>
+      <h1 class="sky-hero-title">Every flight, every route, on a single calendar.</h1>
+      <p class="sky-hero-copy">Pick a date to see boarding times, aircraft, and live status across your fleet.</p>
+    </div>
+  </section>
+
+  <section class="sky-ops-board">
+    <div class="sky-calendar-card">
+      <div
+        data-controller="calendar"
+        data-calendar-events-url-value="<%= calendar_events_path(format: :json) %>">
+        <div class="sky-calendar-filter">
+          <%= select_tag :airplane_id,
+            options_from_collection_for_select(@airplanes, :id, :n_number),
+            include_blank: "All aircraft",
+            class: "form-control w-full sm:w-48",
+            data: {
+              calendar_target: "aircraftFilter",
+              action: "change->calendar#refetch"
+            } %>
+        </div>
+
+        <div data-calendar-target="calendar"></div>
+      </div>
+    </div>
+
+    <aside class="sky-upcoming-panel">
+      <h2 class="sky-sidebar-title">My Upcoming Flights</h2>
+      <p class="sky-muted mt-1">
+        <%= l(Time.current.to_date, format: :long) %> · <%= pluralize(@upcoming_events.size, "flight") %>
+      </p>
+
+      <div class="sky-flight-list">
+        <% if @upcoming_events.any? %>
+          <% @upcoming_events.each do |event| %>
+            <%= link_to event, class: "sky-flight-card" do %>
+              <span class="sky-flight-icon">✈</span>
+              <span>
+                <span class="sky-flight-tail"><%= event.airplane&.n_number.presence || "Aircraft ##{event.airplane_id}" %></span>
+                <span class="sky-flight-type"><%= event.status.titleize %> flight</span>
+                <span class="sky-flight-time">
+                  <%= l(event.start_time, format: "%l:%M %p") if event.start_time.present? %>
+                  <% if event.end_time.present? %>
+                    – <%= l(event.end_time, format: "%l:%M %p") %>
+                  <% end %>
+                </span>
+              </span>
+              <span class="sky-flight-date"><%= l(event.start_time.to_date, format: "%b %-d, %Y") if event.start_time.present? %></span>
+            <% end %>
+          <% end %>
+        <% else %>
+          <div class="sky-empty bg-white">No upcoming flights yet.</div>
+        <% end %>
+      </div>
+    </aside>
+  </section>
+
+  <%= local_assigns[:modal] %>
+</div>

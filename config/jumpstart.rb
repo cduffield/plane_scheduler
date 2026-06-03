@@ -6,7 +6,7 @@ Jumpstart.config = Jumpstart::Configuration.new({"application_name" => "Flight S
  "default_from_email" => "My App <no-reply@example.com>",
  "background_job_processor" => "sidekiq",
  "email_provider" => "",
- "account_types" => "both",
+ "account_types" => "team",
  "apns" => false,
  "fcm" => false,
  "integrations" => [],

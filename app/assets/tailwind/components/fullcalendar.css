@@ -1,11 +1,11 @@
 .fc {
-  --fc-border-color: var(--base-border-secondary, #e5e7eb);
+  --fc-border-color: var(--sky-border, #cfddea);
   --fc-page-bg-color: transparent;
-  --fc-today-bg-color: rgba(37, 99, 235, 0.08);
-  --fc-event-bg-color: var(--bg-primary, #2563eb);
-  --fc-event-border-color: var(--border-primary, #2563eb);
-  --fc-event-text-color: var(--text-on-primary, #ffffff);
-  color: var(--base-text, #111827);
+  --fc-today-bg-color: #0b63c4;
+  --fc-event-bg-color: var(--sky-primary, #2563eb);
+  --fc-event-border-color: var(--sky-primary, #2563eb);
+  --fc-event-text-color: #ffffff;
+  color: var(--sky-foreground, #0b1b2f);
   font-family: var(--font-sans, system-ui, sans-serif);
 }
 
@@ -13,62 +13,191 @@
   align-items: center;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.75rem;
   margin-bottom: 1rem;
 }
 
 .fc .fc-toolbar-title {
-  font-size: 1.25rem;
-  font-weight: 600;
+  color: var(--sky-foreground, #0b1b2f);
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
 }
 
 .fc .fc-button {
-  background: var(--base-bg-lowest, #ffffff);
-  border: 1px solid var(--base-border-secondary, #e5e7eb);
-  border-radius: 0.5rem;
-  color: var(--base-text, #111827);
-  font-size: 0.85rem;
-  padding: 0.35rem 0.75rem;
+  background: var(--sky-card, #ffffff);
+  border: 1px solid var(--sky-border, #cfddea);
+  border-radius: 0.7rem;
+  box-shadow: 0 4px 12px -9px rgb(15 61 103 / 0.55);
+  color: var(--sky-foreground, #0b1b2f);
+  font-size: 0.83rem;
+  font-weight: 800;
+  line-height: 1.1;
+  padding: 0.58rem 0.8rem;
+  text-transform: capitalize;
 }
 
 .fc .fc-button-primary:not(:disabled):hover {
-  background: var(--base-bg-hover, #f3f4f6);
+  background: var(--sky-muted, #f1f7fc);
+  border-color: var(--sky-border, #cfddea);
+  color: var(--sky-primary, #0067c9);
 }
 
-.fc .fc-button-primary.fc-button-active {
-  background: var(--bg-primary, #2563eb);
-  border-color: var(--border-primary, #2563eb);
-  color: var(--text-on-primary, #ffffff);
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  background: var(--sky-accent, #fb8d2f);
+  border-color: var(--sky-accent, #fb8d2f);
+  box-shadow: 0 10px 18px -12px rgb(251 141 47 / 0.95);
+  color: #0b1b2f;
+}
+
+.fc .fc-button-primary:disabled {
+  background: var(--sky-card, #ffffff);
+  border-color: transparent;
+  color: var(--sky-foreground, #0b1b2f);
+  opacity: 1;
+}
+
+.fc .fc-scrollgrid {
+  background: #edf5fb;
+  border: 1px solid var(--sky-border, #cfddea);
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.fc .fc-col-header-cell {
+  background: #edf5fb;
+  border-color: var(--sky-border, #cfddea);
+  padding: 0.75rem 0;
+}
+
+.fc .fc-col-header-cell-cushion {
+  color: #52657a;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.fc .fc-daygrid-day {
+  background: #edf5fb;
+  border-color: var(--sky-border, #cfddea);
+}
+
+.fc .fc-daygrid-day-frame {
+  min-height: 7.4rem;
+  padding: 0.25rem;
+}
+
+.fc .fc-daygrid-day-number {
+  color: var(--sky-foreground, #0b1b2f);
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 0.45rem 0.55rem;
+  text-decoration: none;
+}
+
+.fc .fc-day-other .fc-daygrid-day-number {
+  color: #52657a;
+  opacity: 0.85;
+}
+
+.fc .fc-day-today .fc-daygrid-day-frame {
+  background: #0b63c4;
+  color: #ffffff;
+}
+
+.fc .fc-day-today .fc-daygrid-day-number {
+  color: #ffffff;
 }
 
 .fc .fc-daygrid-event,
 .fc .fc-timegrid-event {
-  border-radius: 0.375rem;
-  padding: 0 0.25rem;
+  background: transparent !important;
+  border: 0;
+  border-radius: 0.3rem;
+  box-shadow: none;
+  color: #ffffff;
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 900;
+  line-height: 1.15;
+  margin: 0.08rem 0.15rem;
+  min-height: 0.9rem;
+  padding: 0;
+  width: calc(100% - 0.3rem);
 }
 
-.fc .fc-daygrid-day-number,
-.fc .fc-col-header-cell-cushion {
-  color: var(--base-text, #111827);
-  font-weight: 500;
+.fc .fc-daygrid-event-dot {
+  display: none;
 }
 
-.dark .fc {
-  --fc-today-bg-color: rgba(59, 130, 246, 0.18);
+.fc .fc-daygrid-event .fc-event-main,
+.fc .fc-timegrid-event .fc-event-main {
+  display: block;
 }
 
-.dark .fc .fc-button {
-  background: var(--base-bg-low, #1f2937);
-  border-color: var(--base-border-tertiary, #374151);
-  color: var(--base-text, #f9fafb);
+.fc .fc-event-main {
+  color: #ffffff;
 }
 
-.dark .fc .fc-button-primary:not(:disabled):hover {
-  background: var(--base-bg-base, #374151);
+.fc .fc-daygrid-block-event .fc-event-time,
+.fc .fc-daygrid-dot-event .fc-event-time,
+.fc .fc-event-title {
+  display: none;
 }
 
-.dark .fc .fc-scrollgrid,
-.dark .fc .fc-col-header-cell,
-.dark .fc .fc-daygrid-day {
-  background: var(--base-bg-lowest, #111827);
+.fc .fc-daygrid-dot-event {
+  align-items: stretch;
+  padding: 0;
+}
+
+.fc .fc-daygrid-dot-event:hover {
+  background: transparent;
+}
+
+.fc .sky-calendar-event-block {
+  color: #ffffff;
+  display: block;
+  overflow: hidden;
+  padding: 0.14rem 0.38rem;
+  border-radius: 0.3rem;
+  min-height: 0.95rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.fc .sky-calendar-event-time,
+.fc .sky-calendar-event-title {
+  color: inherit;
+}
+
+.fc .sky-calendar-event-time {
+  font-weight: 950;
+}
+
+.fc .fc-daygrid-event-harness {
+  margin-top: 0.05rem;
+}
+
+.fc .fc-timegrid-slot,
+.fc .fc-timegrid-axis,
+.fc .fc-list-day-cushion,
+.fc .fc-list-event td {
+  border-color: var(--sky-border, #cfddea);
+}
+
+@media (max-width: 640px) {
+  .fc .fc-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .fc .fc-toolbar-chunk {
+    display: flex;
+    justify-content: center;
+  }
+
+  .fc .fc-daygrid-day-frame {
+    min-height: 5.5rem;
+  }
 }

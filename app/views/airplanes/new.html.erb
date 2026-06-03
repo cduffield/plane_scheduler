@@ -1,15 +1,17 @@
 <% Current.meta_tags.set(title: t("scaffold.new.title", model: "Airplane")) %>
 
-<div class="container px-4 mx-auto my-8">
-  <div class="flex items-center justify-between mb-4">
-    <h1 class="h3">
-      <%= link_to "Airplanes", airplanes_path, class: "text-black dark:text-white" %>
-      <span class="text-gray-400 font-light mx-2">\</span>
-      <%= t("scaffold.new.title", model: "Airplane") %>
-    </h1>
+<div class="container px-4 mx-auto my-8 sky-shell">
+  <div class="sky-page-header">
+    <div class="flex items-center gap-3">
+      <span class="sky-brand-mark">✈</span>
+      <div>
+        <p class="sky-kicker"><%= link_to "Airplanes", airplanes_path %></p>
+        <h1 class="h3"><%= t("scaffold.new.title", model: "Airplane") %></h1>
+      </div>
+    </div>
   </div>
 
-  <div class="p-8 bg-white dark:bg-gray-900 dark:border dark:border-gray-700 rounded shadow">
+  <div class="sky-card sky-card-pad">
     <%= render "form", airplane: @airplane %>
   </div>
 </div>

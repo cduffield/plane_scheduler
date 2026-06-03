@@ -1,0 +1,97 @@
+<% start_time = event.start_time || Time.current.change(hour: 8, min: 0, sec: 0) %>
+<% end_time = event.end_time || (start_time + 2.hours) %>
+
+<div class="sky-modal-backdrop">
+  <div class="sky-flight-modal" role="dialog" aria-modal="true" aria-labelledby="new-flight-title">
+    <%= link_to events_path, class: "sky-modal-close", aria: { label: "Close" } do %>
+      &times;
+    <% end %>
+
+    <h1 id="new-flight-title" class="sky-modal-title">New flight</h1>
+    <p class="sky-modal-copy">Add a new flight to your schedule.</p>
+
+    <%= form_with(model: event, class: "sky-modal-form", data: { controller: "event-form", action: "submit->event-form#prepareSubmit" }) do |form| %>
+      <%= render "error_messages", resource: form.object %>
+
+      <%= form.hidden_field :start_time, value: start_time.strftime("%Y-%m-%d %H:%M"), data: { event_form_target: "startHidden" } %>
+      <%= form.hidden_field :end_time, value: end_time.strftime("%Y-%m-%d %H:%M"), data: { event_form_target: "endHidden" } %>
+
+      <div class="sky-modal-grid">
+        <div class="form-group">
+          <%= label_tag :flight_start_date, "Start date" %>
+          <div class="sky-date-input-wrap">
+            <%= date_field_tag :flight_start_date,
+              start_time.to_date.iso8601,
+              class: "form-control sky-modal-input sky-date-input",
+              data: {
+                event_form_target: "startDate",
+                action: "input->event-form#syncFromSimpleFields change->event-form#syncFromSimpleFields"
+              } %>
+            <button class="sky-date-picker-button" type="button" aria-label="Change start date" data-picker-target="startDate" data-action="event-form#openDatePicker">
+              <svg aria-hidden="true" viewBox="0 0 24 24">
+                <path d="M7 2v3M17 2v3M4 9h16M6 5h12a2 2 0 0 1 2 2v13H4V7a2 2 0 0 1 2-2Z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <%= label_tag :flight_end_date, "End date" %>
+          <div class="sky-date-input-wrap">
+            <%= date_field_tag :flight_end_date,
+              end_time.to_date.iso8601,
+              class: "form-control sky-modal-input sky-date-input",
+              data: {
+                event_form_target: "endDate",
+                action: "input->event-form#syncHiddenFields change->event-form#syncHiddenFields"
+              } %>
+            <button class="sky-date-picker-button" type="button" aria-label="Change end date" data-picker-target="endDate" data-action="event-form#openDatePicker">
+              <svg aria-hidden="true" viewBox="0 0 24 24">
+                <path d="M7 2v3M17 2v3M4 9h16M6 5h12a2 2 0 0 1 2 2v13H4V7a2 2 0 0 1 2-2Z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <%= label_tag :flight_start_time, "Start time" %>
+          <%= time_field_tag :flight_start_time,
+            start_time.strftime("%H:%M"),
+            class: "form-control sky-modal-input",
+            step: 900,
+            data: {
+              event_form_target: "startTime",
+              action: "input->event-form#syncFromSimpleFields change->event-form#syncFromSimpleFields"
+            } %>
+        </div>
+
+        <div class="form-group">
+          <%= label_tag :flight_end_time, "End time" %>
+          <%= time_field_tag :flight_end_time,
+            end_time.strftime("%H:%M"),
+            class: "form-control sky-modal-input",
+            step: 900,
+            data: {
+              event_form_target: "endTime",
+              action: "input->event-form#syncHiddenFields change->event-form#syncHiddenFields"
+            } %>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :airplane_id, "Tail number" %>
+        <%= form.collection_select :airplane_id,
+          @airplanes || current_account.airplanes.order(:n_number),
+          :id,
+          :n_number,
+          { prompt: "Select an aircraft" },
+          { class: "form-control sky-modal-input" } %>
+      </div>
+
+      <div class="sky-modal-actions">
+        <%= link_to "Cancel", events_path, class: "btn btn-secondary" %>
+        <%= form.button "Create flight", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>

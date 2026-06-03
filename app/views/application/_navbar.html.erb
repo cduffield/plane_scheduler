@@ -1,0 +1,50 @@
+<nav class="sky-app-nav">
+  <div class="flex items-center gap-8">
+    <%= link_to root_path, class: "sky-logo-lockup" do %>
+      <span class="sky-brand-mark">✈</span>
+      <span>
+        <span class="sky-logo-title">SkyRoute</span>
+        <span class="sky-logo-subtitle">Flight scheduling</span>
+      </span>
+    <% end %>
+
+    <% if user_signed_in? %>
+      <div class="sky-nav-links">
+        <%= link_to "Airplanes", airplanes_path, class: "sky-nav-link" %>
+        <%= link_to "Events", events_path, class: "sky-nav-link" %>
+        <%= link_to "Payments", event_payments_path, class: "sky-nav-link" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="sky-nav-actions">
+    <% if user_signed_in? %>
+      <% if current_user.respond_to?(:admin?) && current_user.admin? %>
+        <%= link_to "App Admin", madmin_root_path, class: "btn btn-secondary" %>
+      <% end %>
+      <%= link_to "Account Admin", account_admin_path, class: "btn btn-secondary" if Current.account_admin? %>
+      <%= link_to "+ New flight", new_event_path, class: "btn btn-primary" %>
+      <details class="sky-profile-menu">
+        <summary class="sky-profile-button" aria-label="User profile menu">
+          <%= image_tag avatar_url_for(current_user), class: "sky-profile-avatar" %>
+          <span class="sky-profile-name"><%= current_user.name.presence || current_user.email %></span>
+          <span class="sky-profile-caret">⌄</span>
+        </summary>
+
+        <div class="sky-profile-dropdown">
+          <div class="sky-profile-heading">
+            <span class="sky-profile-heading-name"><%= current_user.name.presence || "Signed in" %></span>
+            <span class="sky-profile-heading-email"><%= current_user.email %></span>
+          </div>
+
+          <%= link_to "Settings", edit_user_registration_path, class: "sky-profile-link" %>
+          <%= link_to "Accounts", accounts_path, class: "sky-profile-link" if Jumpstart.config.team_accounts? %>
+          <%= button_to "Logout", destroy_user_session_path, method: :delete, class: "sky-profile-link sky-profile-logout" %>
+        </div>
+      </details>
+    <% else %>
+      <%= link_to "Sign in", new_user_session_path, class: "btn btn-secondary" %>
+      <%= link_to "Sign up", new_user_registration_path, class: "btn btn-primary" %>
+    <% end %>
+  </div>
+</nav>

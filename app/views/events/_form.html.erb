@@ -48,7 +48,7 @@
 
   <div class="form-group">
     <%= form.label :airplane_id, "Airplane" %>
-    <%= form.collection_select :airplane_id, Airplane.order(:n_number), :id, :n_number, { prompt: "Select an airplane" }, { class: "form-control" } %>
+    <%= form.collection_select :airplane_id, @airplanes || current_account.airplanes.order(:n_number), :id, :n_number, { prompt: "Select an airplane" }, { class: "form-control" } %>
   </div>
 
   <% unless form.object.new_record? %>
