@@ -21,7 +21,6 @@ class Api::V1::UsersController < Api::BaseController
         api_token = user.api_tokens.first_or_create(name: ApiToken::DEFAULT_NAME)
         render json: {
           user: {
-            id: user.id,
             email: user.email,
             name: user.name,
             api_tokens: [{

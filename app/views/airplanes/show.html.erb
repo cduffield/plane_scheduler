@@ -101,10 +101,9 @@
         <div class="grid gap-4 md:grid-cols-2">
           <div class="form-group">
             <%= form.label :user_id, "Pilot" %>
-            <%= form.collection_select :user_id,
-              current_account.users.order(:first_name, :last_name, :email),
-              :id,
-              :name,
+            <% pilot_options = current_account.users.order(:first_name, :last_name, :email).map { |user| [user.name, user.signed_id(purpose: :airplane_user_qualification)] } %>
+            <%= form.select :user_id,
+              options_for_select(pilot_options),
               { prompt: "Select pilot" },
               { class: "form-control" } %>
           </div>

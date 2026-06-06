@@ -114,14 +114,14 @@ class AccountTest < ActiveSupport::TestCase
   test "transfer ownership to a new owner" do
     account = accounts(:company)
     new_owner = users(:two)
-    assert accounts(:company).transfer_ownership(new_owner.id)
+    assert accounts(:company).transfer_ownership(new_owner.signed_id(purpose: :account_transfer))
     assert_equal new_owner, account.reload.owner
   end
 
   test "transfer ownership fails transferring to a user outside the account" do
     account = accounts(:company)
     owner = account.owner
-    assert_not account.transfer_ownership(users(:invited).id)
+    assert_not account.transfer_ownership(users(:invited).signed_id(purpose: :account_transfer))
     assert_equal owner, account.reload.owner
   end
 
@@ -130,7 +130,7 @@ class AccountTest < ActiveSupport::TestCase
     new_owner = users(:two)
     payment_processor = account.set_payment_processor :fake_processor, allow_fake: true
     assert_enqueued_with job: Pay::CustomerSyncJob, args: [payment_processor.id] do
-      account.transfer_ownership(new_owner.id)
+      account.transfer_ownership(new_owner.signed_id(purpose: :account_transfer))
     end
   end
 

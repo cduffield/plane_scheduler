@@ -5,7 +5,7 @@ class StripeConnectDirectCheckoutSessionTest < ActiveSupport::TestCase
   test "creates checkout session on connected account for direct charge" do
     event_payment = EventPayment.new(id: 123, amount: 350.25, currency: "usd")
     event = Event.new(id: 456)
-    user = User.new(id: 789, email: "pilot@example.com")
+    user = users(:one)
     session = OpenStruct.new(id: "cs_test_123", url: "https://checkout.stripe.test/session")
 
     captured_params = nil
@@ -38,6 +38,7 @@ class StripeConnectDirectCheckoutSessionTest < ActiveSupport::TestCase
     assert_equal "Flight payment for N101ML", captured_params[:line_items].first[:price_data][:product_data][:name]
     assert_equal "123", captured_params[:payment_intent_data][:metadata][:event_payment_id]
     assert_equal "456", captured_params[:payment_intent_data][:metadata][:event_id]
-    assert_equal "789", captured_params[:payment_intent_data][:metadata][:user_id]
+    assert_nil captured_params[:payment_intent_data][:metadata][:user_id]
+    assert_equal user, User.find_signed(captured_params[:payment_intent_data][:metadata][:user_ref], purpose: :stripe_payment_metadata)
   end
 end

@@ -152,7 +152,15 @@ class EventsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def event_params
-    params.expect(event: [ :start_time, :end_time, :airplane_id, :flight_instructor_id, :tach_start, :tach_end, :hobbs_start, :hobbs_end, :status ]).to_h.symbolize_keys
+    attributes = params.expect(event: [ :start_time, :end_time, :airplane_id, :flight_instructor_id, :tach_start, :tach_end, :hobbs_start, :hobbs_end, :status ]).to_h.symbolize_keys
+    attributes[:flight_instructor_id] = flight_instructor_id_from_signed_token(attributes[:flight_instructor_id]) if attributes.key?(:flight_instructor_id)
+    attributes
+  end
+
+  def flight_instructor_id_from_signed_token(token)
+    return nil if token.blank?
+
+    User.find_signed(token, purpose: :event_flight_instructor)&.id || -1
   end
 
   def close_flight_params

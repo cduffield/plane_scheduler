@@ -19,6 +19,7 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "select[name='event[flight_instructor_id]'] option", text: users(:two).name
+    assert_select "select[name='event[flight_instructor_id]'] option[value='#{users(:two).id}']", count: 0
   end
 
   test "should create event" do
@@ -49,7 +50,7 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
           airplane_id: airplane.id,
           start_time: Time.zone.parse("2026-02-13 18:00"),
           end_time: Time.zone.parse("2026-02-13 20:00"),
-          flight_instructor_id: instructor_membership.user_id
+          flight_instructor_id: instructor_membership.user.signed_id(purpose: :event_flight_instructor)
         }
       }
     end
@@ -67,7 +68,28 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
           airplane_id: @event.airplane_id,
           start_time: @event.start_time,
           end_time: @event.end_time,
-          flight_instructor_id: outside_instructor.id
+          flight_instructor_id: outside_instructor.signed_id(purpose: :event_flight_instructor)
+        }
+      }
+    end
+
+    assert_response :unprocessable_content
+  end
+
+  test "should not create event with raw flight instructor id" do
+    instructor_membership = account_users(:company_regular_user)
+    instructor_membership.update!(flight_instructor: true)
+    airplane = airplanes(:one)
+    airplane.update!(account: accounts(:company))
+    switch_account(accounts(:company))
+
+    assert_no_difference("Event.count") do
+      post events_url, params: {
+        event: {
+          airplane_id: airplane.id,
+          start_time: Time.zone.parse("2026-02-13 18:00"),
+          end_time: Time.zone.parse("2026-02-13 20:00"),
+          flight_instructor_id: instructor_membership.user_id
         }
       }
     end

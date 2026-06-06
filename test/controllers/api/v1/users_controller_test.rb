@@ -20,6 +20,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
 
     assert response.parsed_body["user"]
     assert_equal email, response.parsed_body.dig("user", "email")
+    assert_nil response.parsed_body.dig("user", "id")
     assert_not_nil response.parsed_body.dig("user", "api_tokens").first["token"]
   end
 
