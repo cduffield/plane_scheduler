@@ -5,7 +5,7 @@ class EventPaymentsController < ApplicationController
   def index
     payments = current_user.event_payments
       .joins(event: :airplane)
-      .where(airplanes: { account_id: current_account.id })
+      .where(airplanes: {account_id: current_account.id})
       .includes(event: :airplane)
       .order(created_at: :desc)
     @unpaid_event_payments = payments.reject(&:paid?)

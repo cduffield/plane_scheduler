@@ -65,7 +65,7 @@ class AccountAdminPaymentsController < ApplicationController
   def stripe_account_value(object, key)
     return nil if object.blank?
     return object.public_send(key) if object.respond_to?(key)
-    return object[key.to_s] if object.respond_to?(:[])
+    object[key.to_s] if object.respond_to?(:[])
   rescue KeyError
     nil
   end

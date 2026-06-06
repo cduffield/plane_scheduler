@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <%= link_to t("scaffold.new.title", model: "Airplane"), new_airplane_path, class: "btn btn-secondary" %>
+    <%= link_to t("scaffold.new.title", model: "Airplane"), new_airplane_path, class: "btn btn-secondary" if Current.account_admin? %>
   </div>
 
   <%= tag.div id: ("airplanes" if @pagy.page == 1), class: "sky-card sky-card-pad space-y-8" do %>
@@ -24,7 +24,7 @@
 
     <div class="hidden only:block sky-empty">
       <p class="mb-4 h3">Create your first Airplane</p>
-      <%= link_to t("scaffold.new.title", model: "Airplane"), new_airplane_path, class: "btn btn-primary" %>
+      <%= link_to t("scaffold.new.title", model: "Airplane"), new_airplane_path, class: "btn btn-primary" if Current.account_admin? %>
     </div>
   <% end %>
 

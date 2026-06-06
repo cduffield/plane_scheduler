@@ -8,7 +8,7 @@ class UserMedicalCertificate < ApplicationRecord
     "basic_med" => "BasicMed"
   }.freeze
 
-  validates :medical_class, presence: true, inclusion: { in: MEDICAL_CLASSES.keys }
+  validates :medical_class, presence: true, inclusion: {in: MEDICAL_CLASSES.keys}
 
   def medical_class_label = MEDICAL_CLASSES[medical_class]
 end

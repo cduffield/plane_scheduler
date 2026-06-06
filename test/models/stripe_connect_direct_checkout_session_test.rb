@@ -29,7 +29,7 @@ class StripeConnectDirectCheckoutSessionTest < ActiveSupport::TestCase
       assert_equal session, result
     end
 
-    assert_equal({ stripe_account: "acct_test_123" }, captured_options)
+    assert_equal({stripe_account: "acct_test_123"}, captured_options)
     assert_equal "payment", captured_params[:mode]
     assert_equal "https://example.test/success", captured_params[:success_url]
     assert_equal "https://example.test/cancel", captured_params[:cancel_url]

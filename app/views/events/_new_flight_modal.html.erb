@@ -23,6 +23,7 @@
             <%= date_field_tag :flight_start_date,
               start_time.to_date.iso8601,
               class: "form-control sky-modal-input sky-date-input",
+              autocomplete: "off",
               data: {
                 event_form_target: "startDate",
                 action: "input->event-form#syncFromSimpleFields change->event-form#syncFromSimpleFields"
@@ -41,6 +42,7 @@
             <%= date_field_tag :flight_end_date,
               end_time.to_date.iso8601,
               class: "form-control sky-modal-input sky-date-input",
+              autocomplete: "off",
               data: {
                 event_form_target: "endDate",
                 action: "input->event-form#syncHiddenFields change->event-form#syncHiddenFields"
@@ -58,6 +60,7 @@
           <%= time_field_tag :flight_start_time,
             start_time.strftime("%H:%M"),
             class: "form-control sky-modal-input",
+            autocomplete: "off",
             step: 900,
             data: {
               event_form_target: "startTime",
@@ -70,6 +73,7 @@
           <%= time_field_tag :flight_end_time,
             end_time.strftime("%H:%M"),
             class: "form-control sky-modal-input",
+            autocomplete: "off",
             step: 900,
             data: {
               event_form_target: "endTime",

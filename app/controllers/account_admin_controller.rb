@@ -11,7 +11,7 @@ class AccountAdminController < ApplicationController
       .order(:start_time)
       .limit(5)
     @maintenance_inspections = MaintenanceInspection.joins(:airplane)
-      .where(airplanes: { account_id: current_account.id })
+      .where(airplanes: {account_id: current_account.id})
       .includes(:airplane)
       .order(:name)
   end

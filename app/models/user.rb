@@ -46,7 +46,7 @@ class User < ApplicationRecord
   validate :pilot_qualifications_are_known
   validates :total_time, :pic_time, :sic_time, :cross_country_time, :instrument_time,
     :night_time, :simulator_time, :dual_received_time, :solo_time,
-    numericality: { greater_than_or_equal_to: 0 }
+    numericality: {greater_than_or_equal_to: 0}
 
   def system_theme? = false
 

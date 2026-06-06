@@ -11,6 +11,17 @@ class AirplanesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "regular account member does not see new airplane links" do
+    @airplane.update!(account: accounts(:company))
+    sign_in users(:two)
+    switch_account accounts(:company)
+
+    get airplanes_url
+
+    assert_response :success
+    assert_select "a[href='#{new_airplane_path}']", count: 0
+  end
+
   test "should get new" do
     get new_airplane_url
     assert_response :success
@@ -18,16 +29,15 @@ class AirplanesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create airplane" do
     assert_difference("Airplane.count") do
-      post airplanes_url, params: { airplane: { n_number: @airplane.n_number } }
+      post airplanes_url, params: {airplane: {n_number: @airplane.n_number}}
     end
 
     assert_redirected_to airplane_url(Airplane.last)
   end
 
-
   test "should create airplane and return to account admin" do
     assert_difference("Airplane.count") do
-      post airplanes_url, params: { return_to: "account_admin", airplane: { n_number: "N12345", hobbs_time: 0, tach_time: 0, rate: 125.00 } }
+      post airplanes_url, params: {return_to: "account_admin", airplane: {n_number: "N12345", hobbs_time: 0, tach_time: 0, rate: 125.00}}
     end
 
     assert_redirected_to account_admin_url
@@ -77,7 +87,7 @@ class AirplanesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update airplane" do
-    patch airplane_url(@airplane), params: { airplane: { n_number: @airplane.n_number } }
+    patch airplane_url(@airplane), params: {airplane: {n_number: @airplane.n_number}}
     assert_redirected_to airplane_url(@airplane)
   end
 

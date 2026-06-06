@@ -108,7 +108,7 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update event" do
-    patch event_url(@event), params: { event: { airplane_id: @event.airplane_id, end_time: @event.end_time, start_time: @event.start_time } }
+    patch event_url(@event), params: {event: {airplane_id: @event.airplane_id, end_time: @event.end_time, start_time: @event.start_time}}
     assert_redirected_to event_url(@event)
   end
 
@@ -142,7 +142,7 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:two)
     switch_account account
 
-    patch event_url(event), params: { event: { airplane_id: airplane.id, start_time: event.start_time, end_time: event.end_time + 1.hour } }
+    patch event_url(event), params: {event: {airplane_id: airplane.id, start_time: event.start_time, end_time: event.end_time + 1.hour}}
 
     assert_redirected_to event_url(event)
     assert_equal "You are not allowed to modify this event.", flash[:alert]

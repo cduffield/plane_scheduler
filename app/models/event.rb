@@ -4,7 +4,7 @@ class Event < ApplicationRecord
   belongs_to :flight_instructor, class_name: "User", optional: true
   has_many :event_payments, dependent: :destroy
 
-  enum :status, { scheduled: 0, open: 1, closed: 2, cancelled: 3 }
+  enum :status, {scheduled: 0, open: 1, closed: 2, cancelled: 3}
 
   before_validation :set_start_times_from_airplane, on: :create
   before_validation :set_total_cost, if: :closed?
