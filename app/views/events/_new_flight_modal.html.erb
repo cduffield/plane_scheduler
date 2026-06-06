@@ -90,10 +90,9 @@
 
       <div class="form-group">
         <%= form.label :flight_instructor_id, "Flight instructor" %>
-        <%= form.collection_select :flight_instructor_id,
-          @flight_instructors || [],
-          :id,
-          :name,
+        <% flight_instructor_options = (@flight_instructors || []).map { |user| [user.name, user.signed_id(purpose: :event_flight_instructor)] } %>
+        <%= form.select :flight_instructor_id,
+          options_for_select(flight_instructor_options),
           { include_blank: "No instructor" },
           { class: "form-control sky-modal-input" } %>
       </div>

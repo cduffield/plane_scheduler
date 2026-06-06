@@ -15,7 +15,7 @@ class AirplaneUserQualificationsControllerTest < ActionDispatch::IntegrationTest
     assert_difference("AirplaneUserQualification.count") do
       post airplane_user_qualifications_path(@airplane), params: {
         airplane_user_qualification: {
-          user_id: @pilot.id,
+          user_id: @pilot.signed_id(purpose: :airplane_user_qualification),
           checkout_completed_at: "2026-06-03",
           expires_on: "2027-06-03",
           notes: "Checkout complete"
@@ -31,6 +31,16 @@ class AirplaneUserQualificationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Checkout complete", qualification.notes
   end
 
+  test "airplane show does not expose raw pilot ids in checkout dropdown" do
+    sign_in users(:one)
+    switch_account @account
+
+    get airplane_path(@airplane)
+
+    assert_response :success
+    assert_select "select[name='airplane_user_qualification[user_id]'] option[value='#{@pilot.id}']", count: 0
+  end
+
   test "flight instructor can mark pilot checked out" do
     account_users(:company_regular_user).update!(flight_instructor: true)
     sign_in @pilot
@@ -38,7 +48,7 @@ class AirplaneUserQualificationsControllerTest < ActionDispatch::IntegrationTest
 
     post airplane_user_qualifications_path(@airplane), params: {
       airplane_user_qualification: {
-        user_id: users(:one).id,
+        user_id: users(:one).signed_id(purpose: :airplane_user_qualification),
         checkout_completed_at: "2026-06-03"
       }
     }
@@ -61,5 +71,21 @@ class AirplaneUserQualificationsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to root_path
+  end
+
+  test "account admin cannot mark pilot checked out with raw user id" do
+    sign_in users(:one)
+    switch_account @account
+
+    assert_no_difference("AirplaneUserQualification.count") do
+      post airplane_user_qualifications_path(@airplane), params: {
+        airplane_user_qualification: {
+          user_id: @pilot.id,
+          checkout_completed_at: "2026-06-03"
+        }
+      }
+    end
+
+    assert_redirected_to airplane_path(@airplane)
   end
 end

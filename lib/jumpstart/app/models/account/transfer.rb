@@ -11,9 +11,10 @@ module Account::Transfer
   # Transfers ownership of the account to a user
   # The new owner is automatically granted admin access to allow editing of the account
   # Previous owner roles are unchanged
-  def transfer_ownership(user_id)
+  def transfer_ownership(user_token)
     previous_owner = owner
-    account_user = account_users.find_by!(user_id: user_id)
+    new_owner = User.find_signed(user_token, purpose: :account_transfer)
+    account_user = account_users.find_by!(user: new_owner)
     user = account_user.user
 
     ApplicationRecord.transaction do

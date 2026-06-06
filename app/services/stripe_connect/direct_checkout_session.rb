@@ -42,7 +42,7 @@ module StripeConnect
           metadata: {
             event_payment_id: event_payment.id.to_s,
             event_id: event.id.to_s,
-            user_id: user.id.to_s
+            user_ref: user.signed_id(purpose: :stripe_payment_metadata)
           }
         }
       }

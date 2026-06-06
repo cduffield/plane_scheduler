@@ -20,6 +20,17 @@ class Jumpstart::AccountUsersTest < ActionDispatch::IntegrationTest
       assert_select "a", text: I18n.t("accounts.show.invite"), count: 1
     end
 
+    test "account json does not expose raw user ids" do
+      get account_path(@account, format: :json)
+
+      assert_response :success
+      assert_no_match %r{"user_id":}, response.body
+      assert_no_match %r{"owner_id":}, response.body
+      @account.users.each do |user|
+        assert_no_match %r{[:,]#{user.id}[,\}]}, response.body
+      end
+    end
+
     test "can edit account user" do
       account_user = account_users(:company_regular_user)
       get edit_account_account_user_path(@account, account_user)
