@@ -23,6 +23,11 @@ class EventPaymentsController < ApplicationController
       return
     end
 
+    unless @event.user == current_user
+      redirect_to @event, alert: "You can only pay for your own flight."
+      return
+    end
+
     if @event.total_cost.blank? || @event.total_cost <= 0
       redirect_to @event, alert: "This event does not have a payable total cost yet."
       return

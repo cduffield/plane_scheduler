@@ -1,4 +1,5 @@
 require "test_helper"
+require "ostruct"
 
 class EventPaymentsControllerTest < ActionDispatch::IntegrationTest
   setup do
@@ -15,7 +16,8 @@ class EventPaymentsControllerTest < ActionDispatch::IntegrationTest
       hobbs_start: 100.0,
       hobbs_end: 102.0,
       tach_start: 50.0,
-      tach_end: 52.0
+      tach_end: 52.0,
+      user: @user
     )
   end
 
@@ -37,5 +39,19 @@ class EventPaymentsControllerTest < ActionDispatch::IntegrationTest
     event_payment = EventPayment.find_by!(event: @event, user: @user)
     assert_equal "cs_test_123", event_payment.stripe_checkout_session_id
     assert_redirected_to "https://checkout.stripe.test/session"
+  end
+
+  test "does not create checkout session for another user's event" do
+    @account.set_merchant_processor(:stripe, processor_id: "acct_test_123", data: { onboarding_complete: true })
+    sign_out @user
+    sign_in users(:two)
+    switch_account @account
+
+    assert_no_difference("EventPayment.count") do
+      post event_payment_path(@event)
+    end
+
+    assert_redirected_to event_path(@event)
+    assert_equal "You can only pay for your own flight.", flash[:alert]
   end
 end
