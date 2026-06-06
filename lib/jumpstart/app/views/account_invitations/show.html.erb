@@ -7,8 +7,15 @@
     </div>
   </div>
 
-  <div class="mt-5 flex gap-2 justify-center">
-    <%= button_to t(".accept"), account_invitation_path(@account_invitation.token), method: :put, class: "btn btn-primary" %>
-    <%= button_to t(".decline"), account_invitation_path(@account_invitation.token), method: :delete, class: "btn btn-secondary", data: {turbo_confirm: t("are_you_sure")} %>
-  </div>
+  <% if @invited_email_matches %>
+    <div class="mt-5 flex gap-2 justify-center">
+      <%= button_to t(".accept"), account_invitation_path(@account_invitation.token), method: :put, class: "btn btn-primary" %>
+      <%= button_to t(".decline"), account_invitation_path(@account_invitation.token), method: :delete, class: "btn btn-secondary", data: {turbo_confirm: t("are_you_sure")} %>
+    </div>
+  <% else %>
+    <div class="mt-5 rounded-lg border border-amber-200 bg-amber-50 p-4 text-left text-amber-900">
+      <p class="font-semibold"><%= t(".wrong_user_title") %></p>
+      <p class="mt-1 text-sm"><%= t(".wrong_user_body", invited_email: @account_invitation.email, current_email: current_user.email) %></p>
+    </div>
+  <% end %>
 </div>

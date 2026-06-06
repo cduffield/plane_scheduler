@@ -21,6 +21,55 @@
     <%= form.number_field :rate, class: "form-control", step: 0.01 %>
   </div>
 
+  <% solo_requirement = form.object.airplane_solo_requirement || form.object.build_airplane_solo_requirement %>
+  <div class="sky-panel p-5 mb-5">
+    <div class="mb-4">
+      <h2 class="sky-section-title">Solo Rental Requirements</h2>
+      <p class="sky-muted text-sm">If active, pilots must meet these requirements to book this aircraft without an instructor.</p>
+    </div>
+
+    <%= form.fields_for :airplane_solo_requirement, solo_requirement do |requirement_form| %>
+      <%= requirement_form.hidden_field :id if requirement_form.object.persisted? %>
+
+      <div class="form-group">
+        <div class="form-picker-group">
+          <%= requirement_form.check_box :active %>
+          <%= requirement_form.label :active, "Enable solo rental requirements" %>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-picker-group">
+          <%= requirement_form.check_box :requires_checkout %>
+          <%= requirement_form.label :requires_checkout, "Requires checkout flight" %>
+        </div>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-3">
+        <div class="form-group">
+          <%= requirement_form.label :required_certificate_type, "Required certificate" %>
+          <%= requirement_form.select :required_certificate_type,
+            UserPilotCertificate::CERTIFICATE_TYPES.map { |value, label| [label, value] },
+            { include_blank: "No certificate requirement" },
+            class: "form-control" %>
+        </div>
+
+        <div class="form-group">
+          <%= requirement_form.label :required_rating_type, "Required rating" %>
+          <%= requirement_form.select :required_rating_type,
+            UserPilotCertificate::CERTIFICATE_TYPES.map { |value, label| [label, value] },
+            { include_blank: "No rating requirement" },
+            class: "form-control" %>
+        </div>
+
+        <div class="form-group">
+          <%= requirement_form.label :recent_rental_days, "Recent rental within days" %>
+          <%= requirement_form.number_field :recent_rental_days, class: "form-control", min: 1, step: 1 %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
   <div>
     <%= form.button button_text(form.send(:submit_default_value)), class: "btn btn-primary" %>
 

@@ -30,10 +30,42 @@ module Authentication
 
   # To add extra fields to Devise registration, add the attribute names to `extra_keys`
   def configure_permitted_parameters
-    extra_keys = [:avatar, :name, :preferred_language, :theme]
-    devise_parameter_sanitizer.permit(:sign_up, keys: extra_keys + [:terms_of_service, :invite, owned_accounts_attributes: [:name]])
-    devise_parameter_sanitizer.permit(:account_update, keys: extra_keys)
-    devise_parameter_sanitizer.permit(:accept_invitation, keys: extra_keys)
+    flight_hour_keys = [
+      :total_time,
+      :pic_time,
+      :sic_time,
+      :cross_country_time,
+      :instrument_time,
+      :night_time,
+      :simulator_time,
+      :dual_received_time,
+      :solo_time
+    ]
+    extra_keys = [:avatar, :name, :first_name, :last_name, :phone, :preferred_language, :theme] + flight_hour_keys
+    pilot_qualification_keys = [
+      pilot_certificates: [],
+      aircraft_categories: [],
+      aircraft_classes: [],
+      user_pilot_certificates_attributes: [
+        :id,
+        :certificate_type,
+        :category,
+        :aircraft_class,
+        :certificate_number,
+        :issued_on,
+        :_destroy
+      ],
+      user_medical_certificate_attributes: [
+        :id,
+        :medical_class,
+        :certificate_number,
+        :issued_on,
+        :expires_on
+      ]
+    ]
+    devise_parameter_sanitizer.permit(:sign_up, keys: extra_keys + pilot_qualification_keys + [:terms_of_service, :invite, owned_accounts_attributes: [:name]])
+    devise_parameter_sanitizer.permit(:account_update, keys: extra_keys + pilot_qualification_keys)
+    devise_parameter_sanitizer.permit(:accept_invitation, keys: extra_keys + pilot_qualification_keys)
   end
 
   def after_sign_in_path_for(resource_or_scope)

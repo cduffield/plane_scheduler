@@ -1,0 +1,52 @@
+<div id="add-aircraft-modal" class="sky-modal-backdrop hidden" role="presentation" aria-hidden="true" data-aircraft-modal-target="modal" data-action="click->aircraft-modal#closeOnBackdrop keydown@window->aircraft-modal#closeOnEscape">
+  <div class="sky-flight-modal sky-aircraft-modal" role="dialog" aria-modal="true" aria-labelledby="add-aircraft-title">
+    <button type="button" class="sky-modal-close" aria-label="Close" data-action="aircraft-modal#close">&times;</button>
+
+    <h1 id="add-aircraft-title" class="sky-modal-title">Add aircraft</h1>
+    <p class="sky-modal-copy">Enter aircraft details and configure any maintenance inspections.</p>
+
+    <%= form_with(model: airplane, class: "sky-modal-form", data: { turbo: false }) do |form| %>
+      <%= render "error_messages", resource: form.object %>
+      <%= hidden_field_tag :return_to, "account_admin" %>
+
+      <div class="form-group">
+        <%= form.label :n_number, "N Number" %>
+        <%= form.text_field :n_number, class: "form-control sky-modal-input", placeholder: "N12345", autofocus: true %>
+      </div>
+
+      <div class="sky-modal-grid">
+        <div class="form-group">
+          <%= form.label :hobbs_time, "Hobbs time" %>
+          <%= form.number_field :hobbs_time, class: "form-control sky-modal-input", step: 0.1, placeholder: "0.0" %>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :tach_time, "Tach time" %>
+          <%= form.number_field :tach_time, class: "form-control sky-modal-input", step: 0.1, placeholder: "0.0" %>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :rate, "Hourly rate ($)" %>
+        <%= form.number_field :rate, class: "form-control sky-modal-input", step: 0.01, placeholder: "0.00" %>
+      </div>
+
+      <div class="sky-modal-divider"></div>
+
+      <div class="sky-modal-section-header">
+        <div class="flex items-center gap-2">
+          <span aria-hidden="true">⌁</span>
+          <h2 class="sky-section-title">Maintenance Inspections</h2>
+        </div>
+        <button type="button" class="btn btn-secondary">+ Add inspection</button>
+      </div>
+
+      <div class="sky-empty sky-modal-empty">No maintenance inspections yet.</div>
+
+      <div class="sky-modal-actions">
+        <button type="button" class="btn btn-secondary" data-action="aircraft-modal#close">Cancel</button>
+        <%= form.button "Add aircraft", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>

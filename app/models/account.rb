@@ -1,4 +1,6 @@
 class Account < ApplicationRecord
+  pay_merchant
+
   include Billing, Domains, Transfer, Types
 
   has_many :airplanes, dependent: :destroy

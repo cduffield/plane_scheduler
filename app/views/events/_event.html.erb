@@ -13,6 +13,14 @@
       <p class="mt-1 text-sm font-semibold"><%= event.airplane&.n_number.presence || event.airplane_id %></p>
     </div>
     <div>
+      <p class="sky-kicker">Flight instructor</p>
+      <p class="mt-1 text-sm font-semibold"><%= event.flight_instructor&.name.presence || "None" %></p>
+    </div>
+    <div>
+      <p class="sky-kicker">Booked by</p>
+      <p class="mt-1 text-sm font-semibold"><%= event.user&.name.presence || "Unknown" %></p>
+    </div>
+    <div>
       <p class="sky-kicker">Status</p>
       <p class="mt-1"><span class="sky-badge"><%= event.status.titleize %></span></p>
     </div>

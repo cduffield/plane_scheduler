@@ -3,6 +3,7 @@ class AccountAdminController < ApplicationController
   before_action :require_account_admin
 
   def show
+    @airplane = current_account.airplanes.new
     @account_users = current_account.account_users.includes(:user).order(created_at: :asc)
     @airplanes = current_account.airplanes.order(:n_number)
     @upcoming_events = current_account.events.includes(:airplane)

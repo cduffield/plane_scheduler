@@ -1,4 +1,4 @@
-<div class="container px-4 mx-auto my-8 sky-shell">
+<div class="container px-4 mx-auto my-8 sky-shell" data-controller="aircraft-modal">
   <div class="sky-page-header">
     <div class="flex items-center gap-3">
       <span class="sky-brand-mark">A</span>
@@ -45,7 +45,11 @@
           <h2 class="sky-section-title">Team</h2>
           <p class="sky-muted text-sm">Account admins and flight instructors for this organization.</p>
         </div>
-        <%= link_to "Manage Accounts", accounts_path, class: "btn btn-secondary" if Jumpstart.config.team_accounts? %>
+        <div class="flex flex-wrap items-center justify-end gap-2">
+          <%= link_to "Invite user", new_account_account_invitation_path(current_account), class: "btn btn-secondary" if Jumpstart.config.team_accounts? %>
+          <%= link_to "Invite flight instructor", new_account_account_invitation_path(current_account, role: "flight_instructor"), class: "btn btn-primary" if Jumpstart.config.team_accounts? %>
+          <%= link_to "Manage Accounts", accounts_path, class: "btn btn-secondary" if Jumpstart.config.team_accounts? %>
+        </div>
       </div>
 
       <% if @account_users.any? %>
@@ -92,7 +96,7 @@
           <h2 class="sky-section-title">Aircraft</h2>
           <p class="sky-muted text-sm">Fleet attached to this account.</p>
         </div>
-        <%= link_to "Add", new_airplane_path, class: "btn btn-primary" %>
+        <button type="button" class="btn btn-primary" data-action="aircraft-modal#open">Add aircraft</button>
       </div>
 
       <% if @airplanes.any? %>
@@ -153,6 +157,13 @@
 
     <section class="sky-card sky-card-pad">
       <div class="mb-4">
+        <h2 class="sky-section-title">Payments</h2>
+        <p class="sky-muted text-sm">Connect Stripe so this account can accept direct flight payments.</p>
+      </div>
+
+      <%= link_to "Payment Settings", account_admin_payments_path, class: "btn btn-primary w-full mb-6" %>
+
+      <div class="mb-4">
         <h2 class="sky-section-title">Maintenance</h2>
         <p class="sky-muted text-sm">Inspection programs configured for the fleet.</p>
       </div>
@@ -176,4 +187,6 @@
       <% end %>
     </section>
   </div>
+
+  <%= render "aircraft_modal", airplane: @airplane %>
 </div>

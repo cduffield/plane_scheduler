@@ -1,6 +1,7 @@
 <% Current.meta_tags.set(title: "Airplanes ##{@airplane.id}") %>
 <%= turbo_stream_from @airplane %>
 <% can_manage_airplane = user_signed_in? && Current.account_admin? %>
+<% can_manage_checkouts = user_signed_in? && (Current.account_admin? || Current.account_user&.flight_instructor?) %>
 
 <div class="container px-4 mx-auto my-8 sky-shell">
   <div class="sky-page-header">
@@ -22,6 +23,114 @@
   <div class="sky-card sky-card-pad">
     <%= render @airplane %>
   </div>
+
+  <div class="mt-8 sky-card sky-card-pad">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <p class="sky-kicker">Dispatch Rules</p>
+        <h2 class="h4">Solo Rental Requirements</h2>
+      </div>
+      <% if can_manage_airplane %>
+        <%= link_to "Edit Requirements", edit_airplane_path(@airplane), class: "btn btn-secondary" %>
+      <% end %>
+    </div>
+
+    <% if (requirement = @airplane.airplane_solo_requirement)&.active? %>
+      <dl class="grid gap-4 md:grid-cols-4">
+        <div>
+          <dt class="sky-kicker">Checkout</dt>
+          <dd class="mt-1 text-sm"><%= requirement.requires_checkout? ? "Required" : "Not required" %></dd>
+        </div>
+        <div>
+          <dt class="sky-kicker">Certificate</dt>
+          <dd class="mt-1 text-sm"><%= requirement.required_certificate_type_label.presence || "Not required" %></dd>
+        </div>
+        <div>
+          <dt class="sky-kicker">Rating</dt>
+          <dd class="mt-1 text-sm"><%= requirement.required_rating_type_label.presence || "Not required" %></dd>
+        </div>
+        <div>
+          <dt class="sky-kicker">Recent Rental</dt>
+          <dd class="mt-1 text-sm"><%= requirement.recent_rental_days.present? ? "Within #{requirement.recent_rental_days} days" : "Not required" %></dd>
+        </div>
+      </dl>
+    <% else %>
+      <div class="sky-empty">Solo rental requirements are not enabled for this airplane.</div>
+    <% end %>
+  </div>
+
+  <% if can_manage_checkouts %>
+    <div class="mt-8 sky-card sky-card-pad">
+      <div class="mb-6">
+        <p class="sky-kicker">Dispatch Rules</p>
+        <h2 class="h4">Pilot Checkouts</h2>
+        <p class="sky-muted mt-1 text-sm">Mark pilots as checked out for this aircraft so they can satisfy solo rental requirements.</p>
+      </div>
+
+      <% qualifications = @airplane.airplane_user_qualifications.includes(:user, :approved_by).order(created_at: :desc) %>
+      <% if qualifications.any? %>
+        <div class="overflow-x-auto rounded-xl border mb-6" style="border-color: var(--sky-border);">
+          <table class="sky-table">
+            <thead>
+              <tr>
+                <th>Pilot</th>
+                <th>Completed</th>
+                <th>Expires</th>
+                <th>Approved by</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% qualifications.each do |qualification| %>
+                <tr>
+                  <td><%= qualification.user.name.presence || qualification.user.email %></td>
+                  <td><%= qualification.checkout_completed_at.present? ? l(qualification.checkout_completed_at, format: :long) : "Not recorded" %></td>
+                  <td><%= qualification.expires_on.present? ? l(qualification.expires_on, format: :long) : "No expiration" %></td>
+                  <td><%= qualification.approved_by&.name.presence || "Unknown" %></td>
+                  <td><%= qualification.notes.presence || "-" %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="sky-empty mb-6">No pilot checkouts have been recorded for this aircraft.</div>
+      <% end %>
+
+      <%= form_with url: airplane_user_qualifications_path(@airplane), scope: :airplane_user_qualification, class: "sky-modal-form" do |form| %>
+        <div class="grid gap-4 md:grid-cols-2">
+          <div class="form-group">
+            <%= form.label :user_id, "Pilot" %>
+            <%= form.collection_select :user_id,
+              current_account.users.order(:first_name, :last_name, :email),
+              :id,
+              :name,
+              { prompt: "Select pilot" },
+              { class: "form-control" } %>
+          </div>
+
+          <div class="form-group">
+            <%= form.label :checkout_completed_at, "Completed on" %>
+            <%= form.date_field :checkout_completed_at, value: Date.current.iso8601, class: "form-control" %>
+          </div>
+
+          <div class="form-group">
+            <%= form.label :expires_on, "Expires on" %>
+            <%= form.date_field :expires_on, class: "form-control" %>
+          </div>
+
+          <div class="form-group">
+            <%= form.label :notes %>
+            <%= form.text_field :notes, class: "form-control", placeholder: "Checkout notes" %>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= form.button "Mark checked out", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
 
   <div class="mt-8 sky-card sky-card-pad">
     <div class="flex items-center justify-between mb-6">

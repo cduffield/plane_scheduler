@@ -15,10 +15,12 @@ class AirplanesController < ApplicationController
   # GET /airplanes/new
   def new
     @airplane = current_account.airplanes.new
+    @airplane.build_airplane_solo_requirement
   end
 
   # GET /airplanes/1/edit
   def edit
+    @airplane.build_airplane_solo_requirement unless @airplane.airplane_solo_requirement
   end
 
   # POST /airplanes or /airplanes.json
@@ -27,7 +29,7 @@ class AirplanesController < ApplicationController
 
     respond_to do |format|
       if @airplane.save
-        format.html { redirect_to @airplane, notice: "Airplane was successfully created." }
+        format.html { redirect_to after_create_airplane_path, notice: "Airplane was successfully created." }
         format.json { render :show, status: :created, location: @airplane }
       else
         format.html { render :new, status: :unprocessable_content }
@@ -69,10 +71,29 @@ class AirplanesController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def airplane_params
-    params.expect(airplane: [ :n_number, :hobbs_time, :tach_time, :rate ])
+    params.expect(airplane: [
+      :n_number,
+      :hobbs_time,
+      :tach_time,
+      :rate,
+      airplane_solo_requirement_attributes: [
+        :id,
+        :active,
+        :requires_checkout,
+        :required_certificate_type,
+        :required_rating_type,
+        :recent_rental_days
+      ]
+    ])
   end
 
   def require_account_admin
     redirect_to root_path, alert: t("must_be_an_admin") unless Current.account_admin?
+  end
+
+  def after_create_airplane_path
+    return account_admin_path if params[:return_to] == "account_admin"
+
+    @airplane
   end
 end
