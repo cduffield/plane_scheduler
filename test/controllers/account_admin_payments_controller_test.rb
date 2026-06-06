@@ -19,7 +19,7 @@ class AccountAdminPaymentsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "payment settings refreshes connected account status from stripe" do
-    merchant = @account.set_merchant_processor(:stripe, processor_id: "acct_test_123", data: { onboarding_complete: false })
+    merchant = @account.set_merchant_processor(:stripe, processor_id: "acct_test_123", data: {onboarding_complete: false})
     stripe_account = OpenStruct.new(
       charges_enabled: true,
       payouts_enabled: true,
@@ -43,7 +43,7 @@ class AccountAdminPaymentsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "payment settings shows stripe requirements when setup is incomplete" do
-    @account.set_merchant_processor(:stripe, processor_id: "acct_test_456", data: { onboarding_complete: false })
+    @account.set_merchant_processor(:stripe, processor_id: "acct_test_456", data: {onboarding_complete: false})
     stripe_account = OpenStruct.new(
       charges_enabled: false,
       payouts_enabled: false,

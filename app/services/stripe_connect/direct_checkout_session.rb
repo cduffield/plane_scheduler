@@ -32,7 +32,7 @@ module StripeConnect
           {
             price_data: {
               currency: event_payment.currency,
-              product_data: { name: checkout_name },
+              product_data: {name: checkout_name},
               unit_amount: amount_in_cents
             },
             quantity: 1
@@ -49,7 +49,7 @@ module StripeConnect
     end
 
     def stripe_options
-      { stripe_account: connected_account_id }
+      {stripe_account: connected_account_id}
     end
 
     def amount_in_cents

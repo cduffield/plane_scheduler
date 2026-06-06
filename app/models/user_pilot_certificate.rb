@@ -31,9 +31,9 @@ class UserPilotCertificate < ApplicationRecord
     "balloon" => "Balloon"
   }.freeze
 
-  validates :certificate_type, presence: true, inclusion: { in: CERTIFICATE_TYPES.keys }
-  validates :category, presence: true, inclusion: { in: CATEGORIES.keys }
-  validates :aircraft_class, presence: true, inclusion: { in: CLASSES.keys }
+  validates :certificate_type, presence: true, inclusion: {in: CERTIFICATE_TYPES.keys}
+  validates :category, presence: true, inclusion: {in: CATEGORIES.keys}
+  validates :aircraft_class, presence: true, inclusion: {in: CLASSES.keys}
 
   def certificate_type_label = CERTIFICATE_TYPES[certificate_type]
 

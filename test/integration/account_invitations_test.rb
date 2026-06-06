@@ -24,7 +24,7 @@ class Jumpstart::AccountInvitationsTest < ActionDispatch::IntegrationTest
   end
 
   test "existing invited users are redirected to login when trying to sign up from invitation link" do
-    post user_registration_path(invite: @account_invitation.token), params: { user: { name: "Invited User", email: @account_invitation.email, password: "password", password_confirmation: "password", terms_of_service: "1" } }
+    post user_registration_path(invite: @account_invitation.token), params: {user: {name: "Invited User", email: @account_invitation.email, password: "password", password_confirmation: "password", terms_of_service: "1"}}
 
     assert_redirected_to new_user_session_path
     assert_equal "An account already exists for invited@example.com. Please login to accept this invitation.", flash[:alert]

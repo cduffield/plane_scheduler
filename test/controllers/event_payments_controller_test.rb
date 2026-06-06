@@ -29,7 +29,7 @@ class EventPaymentsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "creates direct charge checkout session on team connected account" do
-    @account.set_merchant_processor(:stripe, processor_id: "acct_test_123", data: { onboarding_complete: true })
+    @account.set_merchant_processor(:stripe, processor_id: "acct_test_123", data: {onboarding_complete: true})
     fake_session = OpenStruct.new(id: "cs_test_123", url: "https://checkout.stripe.test/session")
 
     StripeConnect::DirectCheckoutSession.stub(:create, fake_session) do
@@ -42,7 +42,7 @@ class EventPaymentsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "does not create checkout session for another user's event" do
-    @account.set_merchant_processor(:stripe, processor_id: "acct_test_123", data: { onboarding_complete: true })
+    @account.set_merchant_processor(:stripe, processor_id: "acct_test_123", data: {onboarding_complete: true})
     sign_out @user
     sign_in users(:two)
     switch_account @account

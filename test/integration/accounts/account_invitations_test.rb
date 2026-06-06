@@ -43,7 +43,7 @@ class Jumpstart::AccountsAccountInvitationsTest < ActionDispatch::IntegrationTes
     test "can invite flight instructors" do
       name, email = "Flight Instructor", "new-instructor@example.com"
       assert_difference "@account.account_invitations.count" do
-        post account_account_invitations_path(@account), params: { account_invitation: { name: name, email: email, flight_instructor: "1" } }
+        post account_account_invitations_path(@account), params: {account_invitation: {name: name, email: email, flight_instructor: "1"}}
       end
 
       assert @account.account_invitations.last.flight_instructor?
