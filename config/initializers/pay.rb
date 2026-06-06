@@ -54,11 +54,16 @@ ActiveSupport.on_load :pay_charge do
   end
 
   def sync_event_payment
-    event_payment_id = metadata.to_h["event_payment_id"]
+    metadata_hash = metadata.to_h
+    event_payment_id = metadata_hash["event_payment_id"]
     return if event_payment_id.blank?
 
     event_payment = EventPayment.find_by(id: event_payment_id)
     return if event_payment.blank?
+    return unless metadata_hash["event_id"].to_s == event_payment.event_id.to_s
+    return unless User.find_signed(metadata_hash["user_ref"], purpose: :stripe_payment_metadata) == event_payment.user
+    return unless amount.to_i == (event_payment.amount * 100).round
+    return unless currency.to_s.downcase == event_payment.currency.to_s.downcase
 
     event_payment.update(
       pay_charge: self,

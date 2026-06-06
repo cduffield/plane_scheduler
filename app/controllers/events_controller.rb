@@ -1,6 +1,7 @@
 class EventsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_event, only: [:show, :edit, :update, :destroy, :open_flight, :close_flight]
+  before_action :require_event_modifier, only: [:edit, :update, :destroy, :open_flight, :close_flight]
   before_action :set_operations_context, only: [:index, :new, :create]
   before_action :set_flight_instructors, only: [:new, :edit, :create, :update]
 
@@ -132,6 +133,15 @@ class EventsController < ApplicationController
     @event = current_account.events.find(params.expect(:id))
   rescue ActiveRecord::RecordNotFound
     redirect_to events_path
+  end
+
+  def require_event_modifier
+    return if @event.blank?
+    return if Current.account_admin?
+    return if @event.user == current_user
+    return if @event.flight_instructor == current_user
+
+    redirect_to @event, alert: "You are not allowed to modify this event."
   end
 
   def set_operations_context

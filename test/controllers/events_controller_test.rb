@@ -112,6 +112,83 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to event_url(@event)
   end
 
+  test "regular account member cannot edit another user's event" do
+    account = accounts(:company)
+    airplane = account.airplanes.create!(n_number: "N202ML", hobbs_time: 10, tach_time: 5, rate: 100)
+    event = airplane.events.create!(
+      user: users(:one),
+      start_time: Time.zone.parse("2026-03-01 08:00"),
+      end_time: Time.zone.parse("2026-03-01 10:00")
+    )
+    sign_out users(:one)
+    sign_in users(:two)
+    switch_account account
+
+    get edit_event_url(event)
+
+    assert_redirected_to event_url(event)
+    assert_equal "You are not allowed to modify this event.", flash[:alert]
+  end
+
+  test "regular account member cannot update another user's event" do
+    account = accounts(:company)
+    airplane = account.airplanes.create!(n_number: "N303ML", hobbs_time: 10, tach_time: 5, rate: 100)
+    event = airplane.events.create!(
+      user: users(:one),
+      start_time: Time.zone.parse("2026-03-02 08:00"),
+      end_time: Time.zone.parse("2026-03-02 10:00")
+    )
+    sign_out users(:one)
+    sign_in users(:two)
+    switch_account account
+
+    patch event_url(event), params: { event: { airplane_id: airplane.id, start_time: event.start_time, end_time: event.end_time + 1.hour } }
+
+    assert_redirected_to event_url(event)
+    assert_equal "You are not allowed to modify this event.", flash[:alert]
+    assert_equal Time.zone.parse("2026-03-02 10:00"), event.reload.end_time
+  end
+
+  test "regular account member cannot destroy another user's event" do
+    account = accounts(:company)
+    airplane = account.airplanes.create!(n_number: "N404ML", hobbs_time: 10, tach_time: 5, rate: 100)
+    event = airplane.events.create!(
+      user: users(:one),
+      start_time: Time.zone.parse("2026-03-03 08:00"),
+      end_time: Time.zone.parse("2026-03-03 10:00")
+    )
+    sign_out users(:one)
+    sign_in users(:two)
+    switch_account account
+
+    assert_no_difference("Event.count") do
+      delete event_url(event)
+    end
+
+    assert_redirected_to event_url(event)
+    assert_equal "You are not allowed to modify this event.", flash[:alert]
+  end
+
+  test "assigned flight instructor can edit event" do
+    account = accounts(:company)
+    instructor_membership = account_users(:company_regular_user)
+    instructor_membership.update!(flight_instructor: true)
+    airplane = account.airplanes.create!(n_number: "N505ML", hobbs_time: 10, tach_time: 5, rate: 100)
+    event = airplane.events.create!(
+      user: users(:one),
+      flight_instructor: users(:two),
+      start_time: Time.zone.parse("2026-03-04 08:00"),
+      end_time: Time.zone.parse("2026-03-04 10:00")
+    )
+    sign_out users(:one)
+    sign_in users(:two)
+    switch_account account
+
+    get edit_event_url(event)
+
+    assert_response :success
+  end
+
   test "should destroy event" do
     assert_difference("Event.count", -1) do
       delete event_url(@event)
