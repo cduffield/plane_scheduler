@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_03_032058) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_03_224100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -96,6 +96,35 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_03_032058) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "airplane_solo_requirements", force: :cascade do |t|
+    t.boolean "active", default: false, null: false
+    t.bigint "airplane_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "recent_rental_days"
+    t.string "required_certificate_type"
+    t.string "required_rating_type"
+    t.boolean "requires_checkout", default: false, null: false
+    t.datetime "updated_at", null: false
+    t.index ["airplane_id"], name: "index_airplane_solo_requirements_on_airplane_id", unique: true
+  end
+
+  create_table "airplane_user_qualifications", force: :cascade do |t|
+    t.bigint "airplane_id", null: false
+    t.bigint "approved_by_id"
+    t.date "checkout_completed_at"
+    t.bigint "checkout_event_id"
+    t.datetime "created_at", null: false
+    t.date "expires_on"
+    t.text "notes"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["airplane_id", "user_id"], name: "index_airplane_user_qualifications_on_airplane_id_and_user_id", unique: true
+    t.index ["airplane_id"], name: "index_airplane_user_qualifications_on_airplane_id"
+    t.index ["approved_by_id"], name: "index_airplane_user_qualifications_on_approved_by_id"
+    t.index ["checkout_event_id"], name: "index_airplane_user_qualifications_on_checkout_event_id"
+    t.index ["user_id"], name: "index_airplane_user_qualifications_on_user_id"
+  end
+
   create_table "airplanes", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.datetime "created_at", null: false
@@ -165,6 +194,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_03_032058) do
     t.bigint "airplane_id", null: false
     t.datetime "created_at", null: false
     t.datetime "end_time"
+    t.bigint "flight_instructor_id"
     t.decimal "hobbs_end", precision: 8, scale: 1
     t.decimal "hobbs_start", precision: 8, scale: 1
     t.datetime "start_time"
@@ -173,7 +203,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_03_032058) do
     t.decimal "tach_start", precision: 8, scale: 1
     t.decimal "total_cost", precision: 10, scale: 2
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
     t.index ["airplane_id"], name: "index_events_on_airplane_id"
+    t.index ["flight_instructor_id"], name: "index_events_on_flight_instructor_id"
+    t.index ["user_id"], name: "index_events_on_user_id"
   end
 
   create_table "inbound_webhooks", force: :cascade do |t|
@@ -381,18 +414,46 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_03_032058) do
     t.datetime "updated_at", precision: nil, null: false
   end
 
+  create_table "user_medical_certificates", force: :cascade do |t|
+    t.string "certificate_number"
+    t.datetime "created_at", null: false
+    t.date "expires_on"
+    t.date "issued_on"
+    t.string "medical_class", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_user_medical_certificates_on_user_id", unique: true
+  end
+
+  create_table "user_pilot_certificates", force: :cascade do |t|
+    t.string "aircraft_class", null: false
+    t.string "category", null: false
+    t.string "certificate_number"
+    t.string "certificate_type", null: false
+    t.datetime "created_at", null: false
+    t.date "issued_on"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_user_pilot_certificates_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "accepted_privacy_at", precision: nil
     t.datetime "accepted_terms_at", precision: nil
     t.boolean "admin"
+    t.string "aircraft_categories", default: [], null: false, array: true
+    t.string "aircraft_classes", default: [], null: false, array: true
     t.datetime "announcements_read_at", precision: nil
     t.datetime "confirmation_sent_at", precision: nil
     t.string "confirmation_token"
     t.datetime "confirmed_at", precision: nil
     t.datetime "created_at", precision: nil, null: false
+    t.decimal "cross_country_time", precision: 10, scale: 1, default: "0.0", null: false
+    t.decimal "dual_received_time", precision: 10, scale: 1, default: "0.0", null: false
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "first_name"
+    t.decimal "instrument_time", precision: 10, scale: 1, default: "0.0", null: false
     t.datetime "invitation_accepted_at", precision: nil
     t.datetime "invitation_created_at", precision: nil
     t.integer "invitation_limit"
@@ -404,15 +465,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_03_032058) do
     t.string "last_name"
     t.integer "last_otp_timestep"
     t.virtual "name", type: :string, as: "(((first_name)::text || ' '::text) || (COALESCE(last_name, ''::character varying))::text)", stored: true
+    t.decimal "night_time", precision: 10, scale: 1, default: "0.0", null: false
     t.text "otp_backup_codes"
     t.boolean "otp_required_for_login"
     t.string "otp_secret"
+    t.string "phone"
+    t.decimal "pic_time", precision: 10, scale: 1, default: "0.0", null: false
+    t.string "pilot_certificates", default: [], null: false, array: true
     t.jsonb "preferences"
     t.string "preferred_language"
     t.datetime "remember_created_at", precision: nil
     t.datetime "reset_password_sent_at", precision: nil
     t.string "reset_password_token"
+    t.decimal "sic_time", precision: 10, scale: 1, default: "0.0", null: false
+    t.decimal "simulator_time", precision: 10, scale: 1, default: "0.0", null: false
+    t.decimal "solo_time", precision: 10, scale: 1, default: "0.0", null: false
     t.string "time_zone"
+    t.decimal "total_time", precision: 10, scale: 1, default: "0.0", null: false
     t.string "unconfirmed_email"
     t.datetime "updated_at", precision: nil, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -429,15 +498,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_03_032058) do
   add_foreign_key "account_users", "users"
   add_foreign_key "accounts", "users", column: "owner_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "airplane_solo_requirements", "airplanes"
+  add_foreign_key "airplane_user_qualifications", "airplanes"
+  add_foreign_key "airplane_user_qualifications", "events", column: "checkout_event_id"
+  add_foreign_key "airplane_user_qualifications", "users"
+  add_foreign_key "airplane_user_qualifications", "users", column: "approved_by_id"
   add_foreign_key "airplanes", "accounts"
   add_foreign_key "api_tokens", "users"
   add_foreign_key "event_payments", "events"
   add_foreign_key "event_payments", "pay_charges"
   add_foreign_key "event_payments", "users"
   add_foreign_key "events", "airplanes"
+  add_foreign_key "events", "users"
+  add_foreign_key "events", "users", column: "flight_instructor_id"
   add_foreign_key "maintenance_inspection_events", "maintenance_inspections"
   add_foreign_key "maintenance_inspections", "airplanes"
   add_foreign_key "pay_charges", "pay_customers", column: "customer_id"
   add_foreign_key "pay_payment_methods", "pay_customers", column: "customer_id"
   add_foreign_key "pay_subscriptions", "pay_customers", column: "customer_id"
+  add_foreign_key "user_medical_certificates", "users"
+  add_foreign_key "user_pilot_certificates", "users"
 end

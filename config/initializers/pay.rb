@@ -54,7 +54,7 @@ ActiveSupport.on_load :pay_charge do
   end
 
   def sync_event_payment
-    event_payment_id = metadata["event_payment_id"]
+    event_payment_id = metadata.to_h["event_payment_id"]
     return if event_payment_id.blank?
 
     event_payment = EventPayment.find_by(id: event_payment_id)

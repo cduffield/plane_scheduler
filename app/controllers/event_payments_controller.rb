@@ -28,6 +28,12 @@ class EventPaymentsController < ApplicationController
       return
     end
 
+    merchant = current_account.merchant_processor
+    unless merchant&.processor_id.present? && merchant.onboarding_complete?
+      redirect_to @event, alert: "Connect Stripe for this account before accepting flight payments."
+      return
+    end
+
     @event_payment = EventPayment.find_or_initialize_by(event: @event, user: current_user)
 
     if @event_payment.paid?
@@ -44,18 +50,14 @@ class EventPaymentsController < ApplicationController
     )
     @event_payment.save!
 
-    checkout_session = current_user.set_payment_processor(:stripe).checkout_charge(
-      amount: (@event_payment.amount * 100).round,
-      name: checkout_name,
+    checkout_session = StripeConnect::DirectCheckoutSession.create(
+      event_payment: @event_payment,
+      event: @event,
+      user: current_user,
+      connected_account_id: merchant.processor_id,
+      checkout_name: checkout_name,
       success_url: checkout_return_url(return_to: event_url(@event)),
-      cancel_url: event_url(@event),
-      payment_intent_data: {
-        metadata: {
-          event_payment_id: @event_payment.id,
-          event_id: @event.id,
-          user_id: current_user.id
-        }
-      }
+      cancel_url: event_url(@event)
     )
 
     if checkout_session.url.blank?
@@ -67,6 +69,8 @@ class EventPaymentsController < ApplicationController
     redirect_to checkout_session.url, allow_other_host: true, status: :see_other
   rescue ActiveRecord::RecordInvalid => e
     redirect_to @event, alert: e.record.errors.full_messages.to_sentence
+  rescue Stripe::StripeError => e
+    redirect_to @event, alert: e.message
   rescue Pay::Error => e
     redirect_to @event, alert: e.message
   end

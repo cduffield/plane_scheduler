@@ -6,6 +6,7 @@ class Accounts::AccountInvitationsController < Accounts::BaseController
 
   def new
     @account_invitation = AccountInvitation.new
+    @account_invitation.flight_instructor = true if params[:role] == "flight_instructor"
   end
 
   def create

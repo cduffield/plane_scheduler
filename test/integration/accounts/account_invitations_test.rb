@@ -33,6 +33,22 @@ class Jumpstart::AccountsAccountInvitationsTest < ActionDispatch::IntegrationTes
       assert @account.account_invitations.last.admin?
     end
 
+    test "can view invite form with flight instructor preselected" do
+      get new_account_account_invitation_path(@account, role: "flight_instructor")
+
+      assert_response :success
+      assert_select "input[name='account_invitation[flight_instructor]'][checked]"
+    end
+
+    test "can invite flight instructors" do
+      name, email = "Flight Instructor", "new-instructor@example.com"
+      assert_difference "@account.account_invitations.count" do
+        post account_account_invitations_path(@account), params: { account_invitation: { name: name, email: email, flight_instructor: "1" } }
+      end
+
+      assert @account.account_invitations.last.flight_instructor?
+    end
+
     test "can cancel invitation" do
       assert_difference "@account.account_invitations.count", -1 do
         delete account_account_invitation_path(@account, @account.account_invitations.last)

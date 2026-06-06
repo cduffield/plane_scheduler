@@ -51,11 +51,17 @@ en:
   account_invitations:
     invite_user: "Invite User"
     authenticate: "Please login or create an account to accept this invitation"
+    authenticate_existing: "Please login to accept this invitation"
+    authenticate_new: "Please create an account to accept this invitation"
+    account_exists: "An account already exists for %{email}. Please login to accept this invitation."
     not_found: "Whoops, we weren't able to find this invitation. Check with your account admin for a new invitation."
     show:
       invited_you_to_join_html: "<strong>%{inviter}</strong> invited you to join <strong>%{account}</strong>"
       accept: "Accept Invitation"
       decline: "Decline"
+      wrong_user: "This invitation was sent to %{invited_email}. You are signed in as %{current_email}. Please sign out and use the invited email to accept it."
+      wrong_user_title: "You're signed in with a different email"
+      wrong_user_body: "This invitation was sent to %{invited_email}, but you are signed in as %{current_email}. Sign out, then open the invite link again with the invited email."
 
   account_users:
     updated: "Account member was successfully updated."

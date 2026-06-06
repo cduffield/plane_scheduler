@@ -523,6 +523,432 @@ label,
   color: var(--sky-muted-foreground);
 }
 
+.sky-profile-shell {
+  background: var(--sky-background);
+  min-height: calc(100vh - 74px);
+}
+
+.sky-profile-header {
+  background: color-mix(in srgb, var(--sky-card), var(--sky-muted) 22%);
+  border-bottom: 1px solid var(--sky-border);
+}
+
+.sky-profile-header-inner {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  max-width: 61rem;
+  padding: 0.85rem 1.5rem;
+}
+
+.sky-profile-header h1 {
+  color: var(--sky-foreground);
+  font-size: 1.25rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+.sky-profile-icon,
+.sky-profile-icon-small {
+  align-items: center;
+  background: #e8f3ff;
+  border: 2px solid var(--sky-primary);
+  border-radius: 999px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  justify-content: center;
+}
+
+.sky-profile-icon {
+  height: 1.35rem;
+  position: relative;
+  width: 1.35rem;
+}
+
+.sky-profile-icon::before,
+.sky-profile-icon-small::before {
+  background: var(--sky-primary);
+  border-radius: 999px;
+  content: "";
+  height: 0.42rem;
+  margin-top: -0.48rem;
+  width: 0.42rem;
+}
+
+.sky-profile-icon::after,
+.sky-profile-icon-small::after {
+  border: 2px solid var(--sky-primary);
+  border-bottom: 0;
+  border-radius: 999px 999px 0 0;
+  bottom: 0.18rem;
+  content: "";
+  height: 0.4rem;
+  position: absolute;
+  width: 0.75rem;
+}
+
+.sky-profile-icon-small {
+  height: 1rem;
+  position: relative;
+  width: 1rem;
+}
+
+.sky-profile-icon-small::before {
+  height: 0.32rem;
+  margin-top: -0.36rem;
+  width: 0.32rem;
+}
+
+.sky-profile-icon-small::after {
+  bottom: 0.11rem;
+  height: 0.3rem;
+  width: 0.56rem;
+}
+
+.sky-profile-medical-icon {
+  color: var(--sky-primary);
+  display: inline-block;
+  height: 1.05rem;
+  position: relative;
+  transform: rotate(-45deg);
+  width: 1.05rem;
+}
+
+.sky-profile-medical-icon::before,
+.sky-profile-medical-icon::after {
+  border: 2px solid currentColor;
+  border-radius: 999px 999px 0 999px;
+  content: "";
+  height: 0.7rem;
+  position: absolute;
+  width: 0.7rem;
+}
+
+.sky-profile-medical-icon::before {
+  left: 0;
+  top: 0;
+}
+
+.sky-profile-medical-icon::after {
+  left: 0.35rem;
+  top: 0.35rem;
+}
+
+.sky-profile-hours-icon {
+  border: 2px solid var(--sky-primary);
+  border-radius: 999px;
+  color: var(--sky-primary);
+  display: inline-block;
+  height: 1.1rem;
+  position: relative;
+  width: 1.1rem;
+}
+
+.sky-profile-hours-icon::before {
+  background: currentColor;
+  content: "";
+  height: 0.38rem;
+  left: 0.45rem;
+  position: absolute;
+  top: 0.22rem;
+  width: 0.1rem;
+}
+
+.sky-profile-hours-icon::after {
+  background: currentColor;
+  content: "";
+  height: 0.1rem;
+  left: 0.45rem;
+  position: absolute;
+  top: 0.53rem;
+  width: 0.34rem;
+}
+
+.sky-profile-back {
+  color: var(--sky-foreground);
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.sky-profile-back::before {
+  content: "<";
+  margin-right: 0.45rem;
+}
+
+.sky-profile-back:hover {
+  color: var(--sky-primary);
+}
+
+.sky-profile-main {
+  margin: 0 auto;
+  max-width: 61rem;
+  padding: 2rem 1.5rem;
+}
+
+.sky-profile-card {
+  background: var(--sky-card);
+  border: 1px solid var(--sky-border);
+  border-radius: 0.9rem;
+  box-shadow: var(--sky-shadow-soft);
+  padding: 1.5rem;
+}
+
+.sky-profile-card-header {
+  margin-bottom: 1.6rem;
+}
+
+.sky-profile-card-header h2 {
+  color: var(--sky-foreground);
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.sky-profile-card-header p {
+  color: var(--sky-muted-foreground);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0.35rem 0 0;
+}
+
+.sky-profile-title-row {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+}
+
+.sky-profile-grid,
+.sky-profile-rating-grid {
+  display: grid;
+  gap: 1.25rem 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.sky-profile-rating-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.sky-profile-hours-grid {
+  display: grid;
+  gap: 1.25rem 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.sky-profile-avatar-row {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.sky-profile-avatar-large {
+  border: 3px solid #e8f3ff;
+  border-radius: 999px;
+  box-shadow: 0 8px 20px -14px rgb(15 61 103 / 0.55);
+  height: 4.25rem;
+  object-fit: cover;
+  width: 4.25rem;
+}
+
+.sky-profile-avatar-upload {
+  flex: 1 1 auto;
+  margin-bottom: 0;
+}
+
+.sky-profile-file-input {
+  background: #fbfdff;
+  border: 1px solid var(--sky-input);
+  border-radius: 0.7rem;
+  color: var(--sky-muted-foreground);
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 700;
+  max-width: 100%;
+  padding: 0.5rem;
+  width: 100%;
+}
+
+.sky-profile-file-input::file-selector-button {
+  background: var(--sky-muted);
+  border: 0;
+  border-radius: 999px;
+  color: var(--sky-foreground);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 850;
+  margin-right: 0.75rem;
+  padding: 0.45rem 0.8rem;
+}
+
+.sky-profile-file-input::file-selector-button:hover {
+  background: #e2f0fb;
+  color: var(--sky-primary);
+}
+
+.sky-profile-card label,
+.sky-profile-rating-card label {
+  color: var(--sky-foreground);
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 800;
+  margin-bottom: 0.35rem;
+}
+
+.sky-profile-input {
+  background-color: #fbfdff;
+  border: 1px solid var(--sky-input);
+  box-shadow: 0 4px 12px -10px rgb(15 61 103 / 0.7);
+  color: var(--sky-foreground);
+  color-scheme: light;
+  min-height: 2.55rem;
+  width: 100%;
+}
+
+.sky-profile-input:focus {
+  border-color: #0b8ee8;
+  box-shadow: 0 0 0 3px rgb(11 142 232 / 0.16), 0 4px 12px -10px rgb(15 61 103 / 0.7);
+  outline: none;
+}
+
+.sky-profile-rating-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.sky-profile-rating-summary,
+.sky-profile-rating-card {
+  background: #fbfdff;
+  border: 1px solid var(--sky-border);
+  border-radius: 0.7rem;
+  padding: 1rem;
+}
+
+.sky-profile-rating-summary {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.sky-profile-rating-summary strong {
+  color: var(--sky-foreground);
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.sky-profile-rating-summary p {
+  color: var(--sky-muted-foreground);
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin: 0.35rem 0 0;
+}
+
+.sky-profile-delete-rating {
+  background: transparent;
+  border: 0;
+  border-radius: 0.5rem;
+  color: var(--sky-foreground);
+  cursor: pointer;
+  flex: 0 0 auto;
+  height: 2rem;
+  position: relative;
+  width: 2rem;
+}
+
+.sky-profile-delete-rating::before {
+  border: 2px solid currentColor;
+  border-top: 0;
+  bottom: 0.38rem;
+  content: "";
+  height: 1rem;
+  left: 0.62rem;
+  position: absolute;
+  width: 0.75rem;
+}
+
+.sky-profile-delete-rating::after {
+  background: currentColor;
+  box-shadow: 0 -0.2rem 0 -0.06rem currentColor;
+  content: "";
+  height: 0.12rem;
+  left: 0.5rem;
+  position: absolute;
+  top: 0.5rem;
+  width: 1rem;
+}
+
+.sky-profile-delete-rating:hover {
+  background: color-mix(in srgb, var(--sky-destructive), transparent 90%);
+  color: var(--sky-destructive);
+}
+
+.sky-profile-divider {
+  border-top: 1px solid var(--sky-border);
+  margin: 1.5rem 0;
+}
+
+.sky-profile-subtitle {
+  color: var(--sky-foreground);
+  font-size: 0.9rem;
+  font-weight: 900;
+  margin: 0 0 1rem;
+}
+
+.sky-profile-rating-card {
+  margin-bottom: 1rem;
+}
+
+.sky-profile-rating-remove-wrap {
+  align-self: end;
+}
+
+.sky-profile-remove-rating {
+  justify-content: center;
+  width: 100%;
+}
+
+.sky-profile-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.sky-profile-danger-card {
+  align-items: center;
+  display: flex;
+  gap: 1.5rem;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+}
+
+.sky-profile-danger-card h2 {
+  color: var(--sky-foreground);
+  font-size: 1rem;
+  font-weight: 900;
+  margin: 0;
+}
+
+.sky-profile-danger-card p {
+  color: var(--sky-muted-foreground);
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin: 0.25rem 0 0;
+}
+
+.sky-profile-cancel-account {
+  border-color: color-mix(in srgb, var(--sky-destructive), transparent 50%);
+  color: var(--sky-destructive);
+  white-space: nowrap;
+}
+
+.sky-profile-cancel-account:hover {
+  background: color-mix(in srgb, var(--sky-destructive), transparent 90%);
+  color: var(--sky-destructive);
+}
+
 @media (max-width: 1024px) {
   .sky-ops-board {
     grid-template-columns: 1fr;
@@ -585,6 +1011,13 @@ label,
   padding: 1.55rem;
   position: relative;
   width: min(100%, 31.5rem);
+}
+
+.sky-aircraft-modal {
+  max-height: calc(100vh - 4rem);
+  max-width: 48rem;
+  overflow-y: auto;
+  width: min(100%, 48rem);
 }
 
 .sky-modal-close {
@@ -661,6 +1094,23 @@ label,
   outline: none;
 }
 
+.sky-modal-divider {
+  border-top: 1px solid #d7e5f2;
+  margin: 1.25rem 0;
+}
+
+.sky-modal-section-header {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.sky-modal-empty {
+  padding: 1.5rem;
+}
+
 .sky-date-input-wrap {
   position: relative;
 }
@@ -734,6 +1184,34 @@ label,
   }
 
   .sky-modal-actions .btn {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .sky-profile-header-inner,
+  .sky-profile-main {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .sky-profile-grid,
+  .sky-profile-rating-grid,
+  .sky-profile-hours-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sky-profile-actions .btn {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .sky-profile-avatar-row,
+  .sky-profile-danger-card {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .sky-profile-cancel-account {
     justify-content: center;
     width: 100%;
   }

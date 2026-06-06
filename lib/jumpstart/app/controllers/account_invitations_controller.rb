@@ -1,10 +1,12 @@
 class AccountInvitationsController < ApplicationController
   before_action :set_account_invitation
   before_action :authenticate_user_with_invite!
+  before_action :require_invited_user!, only: [:update, :destroy]
 
   def show
     @account = @account_invitation.account
     @invited_by = @account_invitation.invited_by
+    @invited_email_matches = invited_email_matches?
   end
 
   def update
@@ -32,7 +34,25 @@ class AccountInvitationsController < ApplicationController
   def authenticate_user_with_invite!
     unless user_signed_in?
       store_location_for(:user, request.fullpath)
-      redirect_to new_user_registration_path(invite: @account_invitation.token), alert: t(".authenticate")
+      if invited_user_exists?
+        redirect_to new_user_session_path, alert: t(".authenticate_existing")
+      else
+        redirect_to new_user_registration_path(invite: @account_invitation.token), alert: t(".authenticate_new")
+      end
     end
+  end
+
+  def invited_user_exists?
+    User.exists?(["LOWER(email) = ?", @account_invitation.email.to_s.downcase])
+  end
+
+  def require_invited_user!
+    return if invited_email_matches?
+
+    redirect_to account_invitation_path(@account_invitation), alert: t("account_invitations.show.wrong_user", invited_email: @account_invitation.email, current_email: current_user.email)
+  end
+
+  def invited_email_matches?
+    current_user.email.to_s.casecmp?(@account_invitation.email.to_s)
   end
 end

@@ -1,6 +1,7 @@
 # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 Rails.application.routes.draw do
   get "/account/admin", to: "account_admin#show", as: :account_admin
+  resource :account_admin_payments, path: "/account/admin/payments", only: [:show, :create]
 
   resources :events do
     collection do
@@ -16,6 +17,7 @@ Rails.application.routes.draw do
   end
   resources :event_payments, only: :index
   resources :airplanes do
+    resources :user_qualifications, controller: "airplane_user_qualifications", only: :create
     resources :maintenance_inspections, except: :show
   end
   draw :jumpstart

@@ -10,8 +10,24 @@ class Jumpstart::AccountInvitationsTest < ActionDispatch::IntegrationTest
 
   test "cannot view invitation when logged out" do
     get account_invitation_path(@account_invitation)
-    assert_redirected_to new_user_registration_path(invite: @account_invitation.token)
-    assert "Create an account to accept your invitation", flash[:alert]
+    assert_redirected_to new_user_session_path
+    assert_equal "Please login to accept this invitation", flash[:alert]
+  end
+
+  test "new invited users can sign up from invitation link" do
+    account_invitation = account_invitations(:two)
+
+    get account_invitation_path(account_invitation)
+
+    assert_redirected_to new_user_registration_path(invite: account_invitation.token)
+    assert_equal "Please create an account to accept this invitation", flash[:alert]
+  end
+
+  test "existing invited users are redirected to login when trying to sign up from invitation link" do
+    post user_registration_path(invite: @account_invitation.token), params: { user: { name: "Invited User", email: @account_invitation.email, password: "password", password_confirmation: "password", terms_of_service: "1" } }
+
+    assert_redirected_to new_user_session_path
+    assert_equal "An account already exists for invited@example.com. Please login to accept this invitation.", flash[:alert]
   end
 
   test "can view invitation when logged in" do
@@ -38,13 +54,32 @@ class Jumpstart::AccountInvitationsTest < ActionDispatch::IntegrationTest
 
   test "fails to accept invitation if validation issues" do
     sign_in users(:one)
-    put account_invitation_path(@account_invitation)
+    assert_no_difference "AccountUser.count" do
+      assert_no_difference "AccountInvitation.count" do
+        put account_invitation_path(@account_invitation)
+      end
+    end
+
     assert_redirected_to account_invitation_path(@account_invitation)
+    assert_equal "This invitation was sent to invited@example.com. You are signed in as one@example.com. Please sign out and use the invited email to accept it.", flash[:alert]
+  end
+
+  test "signed in users cannot decline an invitation for another email" do
+    sign_in users(:one)
+
+    assert_no_difference "AccountInvitation.count" do
+      delete account_invitation_path(@account_invitation)
+    end
+
+    assert_redirected_to account_invitation_path(@account_invitation)
+    assert_equal "This invitation was sent to invited@example.com. You are signed in as one@example.com. Please sign out and use the invited email to accept it.", flash[:alert]
   end
 
   test "accepts invitation automatically through sign up" do
+    account_invitation = account_invitations(:two)
+
     assert_difference "User.count" do
-      post user_registration_path(invite: @account_invitation.token), params: {user: {name: "Invited User", email: "new@inviteduser.com", password: "password", password_confirmation: "password", terms_of_service: "1"}}
+      post user_registration_path(invite: account_invitation.token), params: {user: {name: "Invited User", email: "new@inviteduser.com", password: "password", password_confirmation: "password", terms_of_service: "1"}}
     end
     assert_redirected_to user_root_path
 
@@ -53,7 +88,7 @@ class Jumpstart::AccountInvitationsTest < ActionDispatch::IntegrationTest
     assert_equal ((Jumpstart.config.account_types == "team") ? 1 : 2), user.accounts.count
     assert_includes User.last.accounts, @account
     assert_raises ActiveRecord::RecordNotFound do
-      @account_invitation.reload
+      account_invitation.reload
     end
   end
 end

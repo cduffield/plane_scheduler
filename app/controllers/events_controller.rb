@@ -1,7 +1,8 @@
 class EventsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_event, only: [:show, :edit, :update, :destroy, :open_flight, :close_flight]
-  before_action :set_operations_context, only: [:index, :new]
+  before_action :set_operations_context, only: [:index, :new, :create]
+  before_action :set_flight_instructors, only: [:new, :edit, :create, :update]
 
   # GET /events
   def index
@@ -86,6 +87,7 @@ class EventsController < ApplicationController
     event_attributes = event_params
     airplane = current_account.airplanes.find(event_attributes.delete(:airplane_id))
     @event = airplane.events.new(event_attributes)
+    @event.user = current_user
 
     respond_to do |format|
       if @event.save
@@ -140,9 +142,17 @@ class EventsController < ApplicationController
       .limit(3)
   end
 
+  def set_flight_instructors
+    @flight_instructors = current_account.account_users
+      .flight_instructor
+      .includes(:user)
+      .map(&:user)
+      .sort_by { |user| user.name.to_s.downcase }
+  end
+
   # Only allow a list of trusted parameters through.
   def event_params
-    params.expect(event: [ :start_time, :end_time, :airplane_id, :tach_start, :tach_end, :hobbs_start, :hobbs_end, :status ]).to_h.symbolize_keys
+    params.expect(event: [ :start_time, :end_time, :airplane_id, :flight_instructor_id, :tach_start, :tach_end, :hobbs_start, :hobbs_end, :status ]).to_h.symbolize_keys
   end
 
   def close_flight_params
