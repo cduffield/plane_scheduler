@@ -11,6 +11,17 @@ class AirplanesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "regular account member does not see new airplane links" do
+    @airplane.update!(account: accounts(:company))
+    sign_in users(:two)
+    switch_account accounts(:company)
+
+    get airplanes_url
+
+    assert_response :success
+    assert_select "a[href='#{new_airplane_path}']", count: 0
+  end
+
   test "should get new" do
     get new_airplane_url
     assert_response :success
