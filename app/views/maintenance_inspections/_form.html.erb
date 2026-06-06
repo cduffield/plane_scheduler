@@ -55,18 +55,18 @@
 
     <div class="form-group">
       <%= label_tag "last_inspection_event[performed_at]", "Performed on" %>
-      <%= date_field_tag "last_inspection_event[performed_at]", @latest_inspection_event.performed_at&.to_date, class: "form-control" %>
+      <%= date_field_tag "last_inspection_event[performed_at]", @latest_inspection_event.performed_at&.to_date, class: "form-control", autocomplete: "off" %>
     </div>
 
     <div class="grid gap-6 md:grid-cols-2">
       <div class="form-group">
         <%= label_tag "last_inspection_event[hobbs_time]", "Hobbs at inspection" %>
-        <%= number_field_tag "last_inspection_event[hobbs_time]", @latest_inspection_event.hobbs_time, class: "form-control", min: 0, step: 0.1 %>
+        <%= number_field_tag "last_inspection_event[hobbs_time]", @latest_inspection_event.hobbs_time, class: "form-control", min: 0, step: 0.1, autocomplete: "off" %>
       </div>
 
       <div class="form-group">
         <%= label_tag "last_inspection_event[tach_time]", "Tach at inspection" %>
-        <%= number_field_tag "last_inspection_event[tach_time]", @latest_inspection_event.tach_time, class: "form-control", min: 0, step: 0.1 %>
+        <%= number_field_tag "last_inspection_event[tach_time]", @latest_inspection_event.tach_time, class: "form-control", min: 0, step: 0.1, autocomplete: "off" %>
       </div>
     </div>
 
